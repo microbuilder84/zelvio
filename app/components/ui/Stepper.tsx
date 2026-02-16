@@ -15,7 +15,7 @@ export default function Stepper({ steps, currentStep }: StepperProps) {
                 return (
                     <div
                         key={index}
-                        className="min-w-[90px] flex flex-col items-center flex-shrink-0"
+                        className="min-w-[100px] flex flex-col items-center flex-shrink-0"
                     >
                         {/* Cerchio */}
                         <div
