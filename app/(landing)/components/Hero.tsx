@@ -6,7 +6,7 @@ export default function Hero() {
             <div className="max-w-5xl mx-auto px-6 text-center">
 
                 {/* Titolo */}
-                <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+                <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-4">
                     Eleva ogni preventivo al livello dei veri professionisti
                 </h1>
 
@@ -25,7 +25,7 @@ export default function Hero() {
                 {/* CTA */}
                 <a
                     href="/wizard"
-                    className="inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition"
+                    className="mt-8 inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition"
                 >
                     Inizia ora
                 </a>

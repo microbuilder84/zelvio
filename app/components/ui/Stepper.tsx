@@ -5,7 +5,7 @@ interface StepperProps {
 
 export default function Stepper({ steps, currentStep }: StepperProps) {
     return (
-        <div className="w-full flex items-center justify-between gap-4 mb-10">
+        <div className="w-full flex items-center justify-between gap-4 mb-10 overflow-x-auto px-2">
             {steps.map((label, index) => {
                 const stepNumber = index + 1;
 
@@ -13,7 +13,7 @@ export default function Stepper({ steps, currentStep }: StepperProps) {
                 const isActive = stepNumber === currentStep;
 
                 return (
-                    <div key={index} className="flex-1 flex flex-col items-center">
+                    <div key={index} className="min-w-[70px] flex flex-col items-center flex-shrink-0">
                         {/* Cerchio */}
                         <div
                             className={`
