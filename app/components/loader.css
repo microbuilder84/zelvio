@@ -1,0 +1,25 @@
+.loader-dots::after {
+    content: "...";
+    animation: dots 1.4s steps(4, end) infinite;
+}
+
+@keyframes dots {
+
+    0%,
+    20% {
+        color: transparent;
+    }
+
+    40% {
+        color: inherit;
+    }
+
+    60% {
+        color: transparent;
+    }
+
+    80%,
+    100% {
+        color: inherit;
+    }
+}
