@@ -1,13 +1,13 @@
 export default function PercheZelvio() {
     return (
         <section id="perche-zelvio" className="py-28 bg-gray-50">
-            <div className="max-w-5xl mx-auto px-6 text-center">
+            <div className="max-w-3xl mx-auto px-6 text-center md:text-left">
 
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center">
                     Perché scegliere Zelvio
                 </h2>
 
-                <p className="mt-4 text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                <p className="mt-4 text-gray-600 max-w-2xl mx-auto leading-relaxed text-center md:text-left">
                     Uno strumento progettato per migliorare la tua efficienza e la qualità dei tuoi preventivi.
                 </p>
 
