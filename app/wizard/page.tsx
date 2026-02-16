@@ -323,7 +323,7 @@ export default function WizardPage() {
         </div>
 
         <h1 className="text-2xl font-bold mb-6 text-center">
-          Generatore Preventivi AI
+          Generatore Preventivi
         </h1>
 
         {/* ⭐ STEP WRAPPER CON CARD PREMIUM */}
