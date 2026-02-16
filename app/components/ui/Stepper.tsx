@@ -46,18 +46,18 @@ export default function Stepper({ steps, currentStep }: StepperProps) {
                             {label}
                         </span>
 
-                        {/* Linea di collegamento (solo se non è l’ultimo step) */}
-                        {index < steps.length - 1 && (
-                            <div
-                                className={`
-                                    h-[2px] w-full mt-4
-                                    ${isCompleted
+                        {/* Linea di collegamento (incluso l’ultimo step, ma trasparente) */}
+                        <div
+                            className={`
+                                h-[2px] w-full mt-4
+                                ${index < steps.length - 1
+                                    ? isCompleted
                                         ? "bg-[var(--color-primary)]"
                                         : "bg-gray-300"
-                                    }
-                                `}
-                            />
-                        )}
+                                    : "bg-transparent"
+                                }
+                            `}
+                        />
                     </div>
                 );
             })}
