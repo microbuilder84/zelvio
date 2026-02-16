@@ -119,7 +119,7 @@ export default function PreventivoPage() {
                             {aziendaData.email || "—"} • {aziendaData.telefono || "—"}
                         </p>
                         <p className="mt-3 text-gray-500 italic">
-                            Questo preventivo è stato generato automaticamente tramite il tuo strumento AI.
+                            Questo documento è stato elaborato tramite il tuo strumento di preventivazione.
                         </p>
                     </div>
                 )}
