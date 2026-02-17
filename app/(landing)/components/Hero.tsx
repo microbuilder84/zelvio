@@ -7,7 +7,7 @@ export default function Hero() {
 
                 {/* Testo */}
                 <div className="flex-1 md:pr-20 text-center md:text-left">
-                    <h1 className="text-6xl md:text-6xl font-semibold text-gray-900 leading-tight mb-10">
+                    <h1 className="text-5xl md:text-6xl font-semibold text-gray-900 leading-tight mb-8">
                         Eleva ogni preventivo<br />al livello dei veri professionisti
                     </h1>
 
@@ -20,7 +20,6 @@ export default function Hero() {
                         Zelvio trasforma il processo di preventivazione in un flusso semplice e guidato,
                         aiutandoti a lavorare meglio, più velocemente e con un’immagine aziendale superiore.
                     </p>
-
                     {/* CTA + micro-benefit */}
                     <div className="mt-14 flex flex-col items-center md:items-start">
                         <a
