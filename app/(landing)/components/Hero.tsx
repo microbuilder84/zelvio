@@ -7,7 +7,7 @@ export default function Hero() {
 
                 {/* Testo */}
                 <div className="flex-1 md:pr-16 text-center md:text-left">
-                    <h1 className="text-5xl md:text-6xl font-semibold text-gray-900 leading-tight mb-8">
+                    <h1 className="text-4xl md:text-[2.9rem] font-semibold text-gray-900 leading-[1.12] tracking-tight mb-8">
                         Eleva ogni preventivo<br />al livello dei veri professionisti
                     </h1>
 
