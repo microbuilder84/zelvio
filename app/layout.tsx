@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Zelvio",
-  description: "Il preventivatore AI più veloce e intuitivo",
+  description: "Il preventivatore più veloce e intuitivo",
 };
 
 export default function RootLayout({
