@@ -11,12 +11,14 @@ export default function Hero() {
                         Eleva ogni preventivo<br />al livello dei veri professionisti
                     </h1>
 
-                    <p className="text-xl text-gray-700 max-w-lg leading-relaxed mt-4">
+                    {/* Primo paragrafo – premium */}
+                    <p className="text-lg text-gray-800 max-w-lg leading-[1.45] mt-4">
                         Presenta ai tuoi clienti documenti chiari, accurati e impeccabili,
                         progettati per distinguerti dalla concorrenza.
                     </p>
 
-                    <p className="mt-6 text-gray-600 text-[15px] max-w-md leading-relaxed">
+                    {/* Secondo paragrafo – premium */}
+                    <p className="mt-5 text-gray-700 text-base max-w-md leading-[1.55]">
                         Zelvio trasforma il processo di preventivazione in un flusso semplice e guidato,
                         aiutandoti a lavorare meglio, più velocemente e con un’immagine aziendale superiore.
                     </p>
