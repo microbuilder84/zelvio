@@ -24,7 +24,7 @@ export default function Hero() {
                     </p>
 
                     {/* CTA */}
-                    <div className="mt-10 flex flex-col items-center md:items-start">
+                    <div className="mt-8 flex flex-col items-center md:items-start">
                         <a
                             href="/wizard"
                             className="px-12 py-5 bg-blue-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:bg-blue-700 transition-all duration-300 text-xl flex items-center gap-3"
@@ -32,8 +32,6 @@ export default function Hero() {
                             Inizia ora
                             <span className="text-2xl leading-none">→</span>
                         </a>
-
-
                     </div>
                 </div>
 
