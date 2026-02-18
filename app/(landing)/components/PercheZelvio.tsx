@@ -1,25 +1,26 @@
 export default function PercheZelvio() {
     return (
-        <section id="perche-zelvio" className="py-28 bg-gray-50">
+        <section id="perche-zelvio" className="py-24 bg-gray-50">
             <div className="max-w-3xl mx-auto px-6 text-center md:text-left">
 
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center">
                     Perché scegliere Zelvio
                 </h2>
 
-                <p className="mt-4 text-gray-600 max-w-2xl mx-auto leading-relaxed text-center md:text-left">
+                <p className="mt-4 text-gray-600 max-w-xl mx-auto leading-relaxed text-center md:text-left">
                     Uno strumento progettato per migliorare la tua efficienza e la qualità dei tuoi preventivi.
                 </p>
 
-                <div className="mt-20 grid md:grid-cols-2 gap-16">
+                <div className="mt-16 grid md:grid-cols-2 gap-12 md:gap-16">
 
                     {/* Benefit 1 */}
                     <div
-                        className="p-4 rounded-lg transition-all duration-300 
+                        className="p-5 rounded-xl border border-gray-200 
+                                   transition-all duration-300 
                                    hover:-translate-y-1 hover:shadow-lg 
                                    hover:bg-white cursor-default"
                     >
-                        <h3 className="text-xl font-semibold text-gray-900">
+                        <h3 className="text-lg md:text-xl font-semibold text-gray-900">
                             Risparmi tempo prezioso
                         </h3>
                         <p className="mt-3 text-gray-600 leading-relaxed">
@@ -30,11 +31,12 @@ export default function PercheZelvio() {
 
                     {/* Benefit 2 */}
                     <div
-                        className="p-4 rounded-lg transition-all duration-300 
+                        className="p-5 rounded-xl border border-gray-200 
+                                   transition-all duration-300 
                                    hover:-translate-y-1 hover:shadow-lg 
                                    hover:bg-white cursor-default"
                     >
-                        <h3 className="text-xl font-semibold text-gray-900">
+                        <h3 className="text-lg md:text-xl font-semibold text-gray-900">
                             Preventivi impeccabili
                         </h3>
                         <p className="mt-3 text-gray-600 leading-relaxed">
@@ -44,11 +46,12 @@ export default function PercheZelvio() {
 
                     {/* Benefit 3 */}
                     <div
-                        className="p-4 rounded-lg transition-all duration-300 
+                        className="p-5 rounded-xl border border-gray-200 
+                                   transition-all duration-300 
                                    hover:-translate-y-1 hover:shadow-lg 
                                    hover:bg-white cursor-default"
                     >
-                        <h3 className="text-xl font-semibold text-gray-900">
+                        <h3 className="text-lg md:text-xl font-semibold text-gray-900">
                             Zero errori di calcolo
                         </h3>
                         <p className="mt-3 text-gray-600 leading-relaxed">
@@ -58,11 +61,12 @@ export default function PercheZelvio() {
 
                     {/* Benefit 4 */}
                     <div
-                        className="p-4 rounded-lg transition-all duration-300 
+                        className="p-5 rounded-xl border border-gray-200 
+                                   transition-all duration-300 
                                    hover:-translate-y-1 hover:shadow-lg 
                                    hover:bg-white cursor-default"
                     >
-                        <h3 className="text-xl font-semibold text-gray-900">
+                        <h3 className="text-lg md:text-xl font-semibold text-gray-900">
                             Immagine professionale superiore
                         </h3>
                         <p className="mt-3 text-gray-600 leading-relaxed">
