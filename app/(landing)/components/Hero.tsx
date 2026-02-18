@@ -27,7 +27,13 @@ export default function Hero() {
                     <div className="mt-8 flex flex-col items-center md:items-start">
                         <a
                             href="/wizard"
-                            className="px-12 py-5 bg-blue-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:bg-blue-700 transition-all duration-300 text-xl flex items-center gap-3"
+                            className="px-12 py-5 bg-blue-600 text-white font-semibold rounded-xl 
+                                       shadow-md hover:shadow-xl 
+                                       hover:bg-blue-700 
+                                       transition-all duration-200 ease-out 
+                                       text-xl flex items-center gap-3
+                                       hover:scale-[1.02] active:scale-[0.98]
+                                       hover:-translate-y-[1px]"
                         >
                             Inizia ora
                             <span className="text-2xl leading-none">→</span>

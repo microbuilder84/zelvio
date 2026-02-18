@@ -39,17 +39,21 @@ export default function Navbar() {
     }, []);
 
     const linkClass = (id: string) =>
-        `relative transition-colors after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:bg-blue-600 after:transition-all after:duration-300
-        ${activeSection === id ? "text-blue-600 after:w-full" : "text-gray-700 after:w-0 hover:text-blue-600 hover:after:w-full"}`;
+        `relative transition-all duration-200 ease-out
+         after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:bg-blue-600 after:transition-all after:duration-300
+         ${activeSection === id
+            ? "text-blue-600 after:w-full"
+            : "text-gray-700 opacity-80 hover:opacity-100 hover:text-blue-600 after:w-0 hover:after:w-full"
+        }`;
 
     return (
-        <header className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md border-b border-gray-200 z-50">
+        <header className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md border-b border-gray-200 z-50 transition-all duration-300">
             <nav className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
 
                 {/* LOGO */}
                 <a
                     href="/"
-                    className="text-xl font-semibold text-gray-900 tracking-tight"
+                    className="text-xl font-semibold text-gray-900 tracking-tight hover:opacity-80 transition-opacity duration-200"
                 >
                     Zelvio
                 </a>
@@ -77,14 +81,15 @@ export default function Navbar() {
                 <div className="hidden md:flex items-center gap-6 pl-10">
                     <a
                         href="/accedi"
-                        className="relative text-gray-700 hover:text-blue-600 transition-colors font-medium after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-blue-600 after:transition-all after:duration-300 hover:after:w-full"
+                        className="relative text-gray-700 opacity-80 hover:opacity-100 hover:text-blue-600 transition-all duration-200 font-medium
+                        after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-blue-600 after:transition-all after:duration-300 hover:after:w-full"
                     >
                         Accedi
                     </a>
 
                     <a
                         href="/registrati"
-                        className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-sm"
+                        className="px-3 py-2 bg-blue-600 text-white rounded-lg shadow-sm hover:shadow-md hover:bg-blue-700 transition-all duration-200 font-medium"
                     >
                         Registrati
                     </a>
@@ -97,16 +102,13 @@ export default function Navbar() {
                     aria-label="Toggle menu"
                 >
                     <span
-                        className={`h-[2px] w-6 bg-gray-900 transition-all duration-300 ${isOpen ? "rotate-45 translate-y-[7px]" : ""
-                            }`}
+                        className={`h-[2px] w-6 bg-gray-900 transition-all duration-300 ${isOpen ? "rotate-45 translate-y-[7px]" : ""}`}
                     ></span>
                     <span
-                        className={`h-[2px] w-6 bg-gray-900 transition-all duration-300 ${isOpen ? "opacity-0" : ""
-                            }`}
+                        className={`h-[2px] w-6 bg-gray-900 transition-all duration-300 ${isOpen ? "opacity-0" : ""}`}
                     ></span>
                     <span
-                        className={`h-[2px] w-6 bg-gray-900 transition-all duration-300 ${isOpen ? "-rotate-45 -translate-y-[7px]" : ""
-                            }`}
+                        className={`h-[2px] w-6 bg-gray-900 transition-all duration-300 ${isOpen ? "-rotate-45 -translate-y-[7px]" : ""}`}
                     ></span>
                 </button>
 
@@ -116,7 +118,6 @@ export default function Navbar() {
                         className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300"
                         onClick={() => setIsOpen(false)}
                     >
-                        {/* Pannello laterale */}
                         <div
                             className="absolute right-0 top-0 h-full w-[75%] max-w-[320px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.12)] p-6 flex flex-col gap-6 animate-slideIn"
                             onClick={(e) => e.stopPropagation()}

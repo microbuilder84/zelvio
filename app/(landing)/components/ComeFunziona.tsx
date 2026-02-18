@@ -14,7 +14,11 @@ export default function ComeFunziona() {
                 <div className="mt-20 grid md:grid-cols-3 gap-16">
 
                     {/* Step 1 */}
-                    <div>
+                    <div
+                        className="p-6 rounded-xl transition-all duration-300 
+                                   hover:-translate-y-1 hover:shadow-xl 
+                                   hover:bg-gray-50 cursor-default"
+                    >
                         <div className="text-blue-600 text-5xl font-bold">1</div>
                         <h3 className="mt-5 text-xl font-semibold text-gray-900">
                             Inserisci i dati dell’intervento
@@ -25,7 +29,11 @@ export default function ComeFunziona() {
                     </div>
 
                     {/* Step 2 */}
-                    <div>
+                    <div
+                        className="p-6 rounded-xl transition-all duration-300 
+                                   hover:-translate-y-1 hover:shadow-xl 
+                                   hover:bg-gray-50 cursor-default"
+                    >
                         <div className="text-blue-600 text-5xl font-bold">2</div>
                         <h3 className="mt-5 text-xl font-semibold text-gray-900">
                             Aggiungi dettagli e costi
@@ -36,7 +44,11 @@ export default function ComeFunziona() {
                     </div>
 
                     {/* Step 3 */}
-                    <div>
+                    <div
+                        className="p-6 rounded-xl transition-all duration-300 
+                                   hover:-translate-y-1 hover:shadow-xl 
+                                   hover:bg-gray-50 cursor-default"
+                    >
                         <div className="text-blue-600 text-5xl font-bold">3</div>
                         <h3 className="mt-5 text-xl font-semibold text-gray-900">
                             Genera il preventivo

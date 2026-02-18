@@ -14,7 +14,11 @@ export default function PercheZelvio() {
                 <div className="mt-20 grid md:grid-cols-2 gap-16">
 
                     {/* Benefit 1 */}
-                    <div className="text-left">
+                    <div
+                        className="p-4 rounded-lg transition-all duration-300 
+                                   hover:-translate-y-1 hover:shadow-lg 
+                                   hover:bg-white cursor-default"
+                    >
                         <h3 className="text-xl font-semibold text-gray-900">
                             Risparmi tempo prezioso
                         </h3>
@@ -25,7 +29,11 @@ export default function PercheZelvio() {
                     </div>
 
                     {/* Benefit 2 */}
-                    <div className="text-left">
+                    <div
+                        className="p-4 rounded-lg transition-all duration-300 
+                                   hover:-translate-y-1 hover:shadow-lg 
+                                   hover:bg-white cursor-default"
+                    >
                         <h3 className="text-xl font-semibold text-gray-900">
                             Preventivi impeccabili
                         </h3>
@@ -35,7 +43,11 @@ export default function PercheZelvio() {
                     </div>
 
                     {/* Benefit 3 */}
-                    <div className="text-left">
+                    <div
+                        className="p-4 rounded-lg transition-all duration-300 
+                                   hover:-translate-y-1 hover:shadow-lg 
+                                   hover:bg-white cursor-default"
+                    >
                         <h3 className="text-xl font-semibold text-gray-900">
                             Zero errori di calcolo
                         </h3>
@@ -45,7 +57,11 @@ export default function PercheZelvio() {
                     </div>
 
                     {/* Benefit 4 */}
-                    <div className="text-left">
+                    <div
+                        className="p-4 rounded-lg transition-all duration-300 
+                                   hover:-translate-y-1 hover:shadow-lg 
+                                   hover:bg-white cursor-default"
+                    >
                         <h3 className="text-xl font-semibold text-gray-900">
                             Immagine professionale superiore
                         </h3>
