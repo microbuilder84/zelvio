@@ -15,9 +15,43 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// ⭐ Metadata completo e definitivo
 export const metadata: Metadata = {
-  title: "Zelvio",
-  description: "Il preventivatore più veloce e intuitivo",
+  title: "Zelvio — Preventivi in pochi minuti",
+  description:
+    "Crea preventivi chiari, professionali e pronti da inviare in pochi minuti. Zelvio semplifica il lavoro di tecnici e installatori con un flusso rapido e intuitivo.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
+  alternates: {
+    canonical: "https://zelvio.com",
+  },
+  openGraph: {
+    title: "Zelvio — Preventivi in pochi minuti",
+    description:
+      "Crea preventivi chiari e professionali in pochi minuti. Zelvio è lo strumento semplice e veloce per tecnici e installatori.",
+    url: "https://zelvio.com",
+    siteName: "Zelvio",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Zelvio — Preventivi in pochi minuti",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Zelvio — Preventivi in pochi minuti",
+    description:
+      "Crea preventivi chiari e professionali in pochi minuti con Zelvio.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
@@ -36,9 +70,7 @@ export default function RootLayout({
         </div>
 
         {/* ⭐ Contenuto della pagina */}
-        <main className="overflow-x-hidden">
-          {children}
-        </main>
+        <main className="overflow-x-hidden">{children}</main>
       </body>
     </html>
   );
