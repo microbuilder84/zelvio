@@ -1,30 +1,30 @@
 export default function Contatti() {
     return (
-        <section id="contatti" className="py-24 bg-gray-50">
+        <section id="contatti" className="py-20 md:py-24 bg-gray-50">
             <div
                 className="max-w-3xl mx-auto px-6 text-center
+                           rounded-xl py-10 md:py-12
                            transition-all duration-300 ease-out
-                           hover:-translate-y-[2px] hover:bg-white hover:shadow-sm
-                           rounded-xl py-12"
+                           md:hover:-translate-y-[2px] md:hover:bg-white md:hover:shadow-sm"
             >
 
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+                <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
                     Contatti
                 </h2>
 
                 <p
-                    className="mt-6 text-gray-600 max-w-lg mx-auto leading-[1.65]
-                               transition-opacity duration-300 hover:opacity-90"
+                    className="mt-5 md:mt-6 text-gray-600 max-w-md mx-auto leading-[1.65]
+                               text-[15px] md:text-base"
                 >
                     Per informazioni, richieste o supporto puoi contattarci tramite email.
                 </p>
 
-                <div className="mt-10 text-gray-700">
-                    <p className="text-lg flex flex-col items-center gap-1 md:flex-row md:justify-center">
+                <div className="mt-8 md:mt-10 text-gray-700">
+                    <p className="text-base md:text-lg flex flex-col items-center gap-1 md:flex-row md:justify-center">
                         <span className="font-semibold">Email:</span>
                         <a
                             href="mailto:info@zelvio.com"
-                            className="text-blue-600 hover:underline hover:opacity-80 underline-offset-2 transition-opacity duration-200"
+                            className="text-blue-600 underline-offset-2 hover:underline md:hover:opacity-80 transition-opacity duration-200"
                         >
                             info@zelvio.com
                         </a>

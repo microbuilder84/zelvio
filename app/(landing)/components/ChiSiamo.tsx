@@ -1,20 +1,22 @@
 export default function ChiSiamo() {
     return (
-        <section id="chi-siamo" className="py-24 bg-white">
+        <section id="chi-siamo" className="py-20 md:py-24 bg-white">
             <div
                 className="max-w-3xl mx-auto px-6 text-center
+                           md:text-left
+                           rounded-xl py-10 md:py-12
                            transition-all duration-300 ease-out
-                           hover:-translate-y-[2px] hover:bg-gray-50 hover:shadow-sm
-                           rounded-xl py-12"
+                           md:hover:-translate-y-[2px] md:hover:bg-gray-50 md:hover:shadow-sm"
             >
 
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+                <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
                     Chi siamo
                 </h2>
 
                 <p
-                    className="mt-8 text-gray-600 leading-[1.65] max-w-xl mx-auto
-                               transition-opacity duration-300 hover:opacity-90"
+                    className="mt-6 md:mt-8 text-gray-600 leading-[1.65] 
+                               max-w-md md:max-w-xl mx-auto md:mx-0
+                               text-[15px] md:text-base"
                 >
                     Zelvio nasce dall’esperienza diretta nel settore delle installazioni
                     e dalla necessità di creare preventivi più rapidi, accurati e professionali.
@@ -23,8 +25,9 @@ export default function ChiSiamo() {
                 </p>
 
                 <p
-                    className="mt-6 text-gray-600 leading-[1.65] max-w-xl mx-auto
-                               transition-opacity duration-300 hover:opacity-90"
+                    className="mt-5 md:mt-6 text-gray-600 leading-[1.65] 
+                               max-w-md md:max-w-xl mx-auto md:mx-0
+                               text-[15px] md:text-base"
                 >
                     Crediamo che ogni professionista meriti strumenti moderni e intuitivi,
                     in grado di migliorare l’efficienza e l’immagine aziendale.
