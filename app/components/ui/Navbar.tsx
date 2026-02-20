@@ -49,11 +49,11 @@ export default function Navbar() {
 
     return (
         <header className="
-        fixed top-0 left-0 w-full 
-        bg-red-500 
-        border-b border-gray-200 
-        z-50
-    ">
+            fixed top-0 left-0 w-full 
+            bg-red-500 
+            border-b border-gray-200 
+            z-40
+        ">
             <nav className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
 
                 {/* LOGO */}
@@ -124,7 +124,7 @@ export default function Navbar() {
                 {/* MENU MOBILE FULLSCREEN */}
                 {isOpen && (
                     <div
-                        className="fixed inset-0 bg-white z-40 flex flex-col p-8 animate-fadeIn"
+                        className="fixed inset-0 bg-white z-50 flex flex-col p-8 animate-fadeIn"
                     >
                         <div className="flex flex-col gap-6 mt-10 text-left">
 
