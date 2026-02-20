@@ -6,6 +6,23 @@ export default function Navbar() {
     const [activeSection, setActiveSection] = useState("");
     const [isOpen, setIsOpen] = useState(false);
 
+    // 🔒 Blocca lo scroll quando il menu è aperto
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+    }, [isOpen]);
+
+    // 🔒 Chiudi il menu quando scrolli
+    useEffect(() => {
+        const closeOnScroll = () => setIsOpen(false);
+        window.addEventListener("scroll", closeOnScroll);
+        return () => window.removeEventListener("scroll", closeOnScroll);
+    }, []);
+
+    // Evidenziazione sezione attiva
     useEffect(() => {
         const sections = [
             "come-funziona",
@@ -122,28 +139,45 @@ export default function Navbar() {
                         onClick={() => setIsOpen(false)}
                     >
                         <div
-                            className="absolute right-0 top-0 h-full w-[75%] max-w-[320px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.12)] p-6 flex flex-col gap-6 animate-slideIn"
+                            className="absolute right-0 top-0 h-full w-[75%] max-w-[320px] bg-white/95 shadow-[0_4px_20px_rgba(0,0,0,0.12)] p-6 flex flex-col gap-6 animate-slideIn"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <a href="#come-funziona" className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors">
+                            <a
+                                href="#come-funziona"
+                                onClick={() => setIsOpen(false)}
+                                className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors"
+                            >
                                 Come funziona
                             </a>
 
-                            <a href="#perche-zelvio" className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors">
+                            <a
+                                href="#perche-zelvio"
+                                onClick={() => setIsOpen(false)}
+                                className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors"
+                            >
                                 Perché Zelvio
                             </a>
 
-                            <a href="#chi-siamo" className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors">
+                            <a
+                                href="#chi-siamo"
+                                onClick={() => setIsOpen(false)}
+                                className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors"
+                            >
                                 Chi siamo
                             </a>
 
-                            <a href="#contatti" className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors">
+                            <a
+                                href="#contatti"
+                                onClick={() => setIsOpen(false)}
+                                className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors"
+                            >
                                 Contatti
                             </a>
 
                             <div className="mt-auto flex flex-col gap-4 pt-4 border-t">
                                 <a
                                     href="/accedi"
+                                    onClick={() => setIsOpen(false)}
                                     className="text-gray-700 text-lg font-medium hover:text-blue-600 transition-colors"
                                 >
                                     Accedi
@@ -151,6 +185,7 @@ export default function Navbar() {
 
                                 <a
                                     href="/registrati"
+                                    onClick={() => setIsOpen(false)}
                                     className="px-4 py-3 bg-blue-600 text-white rounded-lg text-center text-lg font-medium hover:bg-blue-700 transition-colors"
                                 >
                                     Registrati
