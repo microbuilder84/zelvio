@@ -1,7 +1,7 @@
 export default function Footer() {
     return (
         <footer
-            className="py-8 md:py-10 bg-white border-t border-gray-200
+            className="py-8 md:py-12 bg-white border-t border-gray-200
                        transition-all duration-300 ease-out
                        md:hover:bg-gray-50"
         >

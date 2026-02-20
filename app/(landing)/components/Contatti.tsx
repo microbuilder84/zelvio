@@ -1,6 +1,6 @@
 export default function Contatti() {
     return (
-        <section id="contatti" className="py-20 md:py-24 bg-gray-50">
+        <section id="contatti" className="py-20 md:py-28 bg-gray-50">
             <div
                 className="max-w-3xl mx-auto px-6 text-center
                            rounded-xl py-10 md:py-12
@@ -19,7 +19,7 @@ export default function Contatti() {
                     Per informazioni, richieste o supporto puoi contattarci tramite email.
                 </p>
 
-                <div className="mt-8 md:mt-10 text-gray-700">
+                <div className="mt-8 md:mt-8 text-gray-700">
                     <p className="text-base md:text-lg flex flex-col items-center gap-1 md:flex-row md:justify-center">
                         <span className="font-semibold">Email:</span>
                         <a

@@ -1,6 +1,6 @@
 export default function ChiSiamo() {
     return (
-        <section id="chi-siamo" className="py-20 md:py-24 bg-white">
+        <section id="chi-siamo" className="py-20 md:py-28 bg-white">
             <div
                 className="max-w-3xl mx-auto px-6 text-center
                            md:text-left

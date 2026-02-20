@@ -1,6 +1,6 @@
 export default function PercheZelvio() {
     return (
-        <section id="perche-zelvio" className="py-20 md:py-24 bg-gray-50">
+        <section id="perche-zelvio" className="py-20 md:py-28 bg-gray-50">
             <div className="max-w-3xl mx-auto px-6 text-center md:text-left">
 
                 <h2 className="text-2xl md:text-4xl font-bold text-gray-900 text-center">
@@ -11,7 +11,7 @@ export default function PercheZelvio() {
                     Uno strumento progettato per migliorare la tua efficienza e la qualità dei tuoi preventivi.
                 </p>
 
-                <div className="mt-14 grid md:grid-cols-2 gap-10 md:gap-16">
+                <div className="mt-14 grid md:grid-cols-2 gap-8 md:gap-16">
 
                     {/* Benefit 1 */}
                     <div

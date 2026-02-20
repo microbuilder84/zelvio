@@ -1,6 +1,6 @@
 export default function ComeFunziona() {
     return (
-        <section id="come-funziona" className="py-20 md:py-24 bg-white">
+        <section id="come-funziona" className="py-20 md:py-28 bg-white">
             <div className="max-w-5xl mx-auto px-6 text-center">
 
                 <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
@@ -11,7 +11,7 @@ export default function ComeFunziona() {
                     Zelvio ti guida passo dopo passo nella creazione di un preventivo professionale.
                 </p>
 
-                <div className="mt-14 grid md:grid-cols-3 gap-10 md:gap-16">
+                <div className="mt-14 grid md:grid-cols-3 gap-8 md:gap-16">
 
                     {/* Step 1 */}
                     <div

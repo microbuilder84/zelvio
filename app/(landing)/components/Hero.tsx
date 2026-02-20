@@ -2,7 +2,7 @@
 
 export default function Hero() {
     return (
-        <section className="pt-24 pb-20 md:pt-32 md:pb-28 bg-gradient-to-b from-white to-gray-50">
+        <section className="pt-24 pb-24 md:pt-36 md:pb-32 bg-gradient-to-b from-white to-gray-50">
             <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-16 md:gap-20">
 
                 {/* Testo */}
