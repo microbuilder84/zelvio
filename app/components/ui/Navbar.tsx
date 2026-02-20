@@ -6,7 +6,7 @@ export default function Navbar() {
     const [activeSection, setActiveSection] = useState("");
     const [isOpen, setIsOpen] = useState(false);
 
-    // Evidenziazione sezione attiva
+    // Evidenziazione sezione attiva (solo logica, non tocca il menu)
     useEffect(() => {
         const sections = [
             "come-funziona",
@@ -39,6 +39,15 @@ export default function Navbar() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    // Blocca lo scroll quando il menu mobile è aperto
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+    }, [isOpen]);
+
     const linkClass = (id: string) =>
         `relative transition-all duration-200 ease-out
          after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:bg-blue-600 after:transition-all after:duration-300
@@ -48,12 +57,7 @@ export default function Navbar() {
         }`;
 
     return (
-        <header className="
-            fixed top-0 left-0 w-full 
-            bg-white 
-            border-b border-gray-200 
-            z-40
-        ">
+        <header className="fixed top-0 left-0 w-full bg-white border-b border-gray-200 z-50">
             <nav className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
 
                 {/* LOGO */}
@@ -104,7 +108,7 @@ export default function Navbar() {
                 {/* HAMBURGER MENU (MOBILE) */}
                 <button
                     className="md:hidden flex flex-col gap-[4px] mr-2 z-50"
-                    onClick={() => setIsOpen(!isOpen)}
+                    onClick={() => setIsOpen((prev) => !prev)}
                     aria-label="Toggle menu"
                 >
                     <span
@@ -120,67 +124,64 @@ export default function Navbar() {
                             }`}
                     ></span>
                 </button>
-
-                {/* MENU MOBILE FULLSCREEN CHE COPRE ANCHE LA NAVBAR */}
-                {isOpen && (
-                    <div
-                        className="fixed inset-0 top-0 left-0 w-full h-full bg-white z-50 flex flex-col p-8 animate-fadeIn"
-                    >
-                        <div className="flex flex-col gap-6 mt-20 text-left">
-
-                            <a
-                                href="#come-funziona"
-                                onClick={() => setIsOpen(false)}
-                                className="text-xl font-medium text-gray-900"
-                            >
-                                Come funziona
-                            </a>
-
-                            <a
-                                href="#perche-zelvio"
-                                onClick={() => setIsOpen(false)}
-                                className="text-xl font-medium text-gray-900"
-                            >
-                                Perché Zelvio
-                            </a>
-
-                            <a
-                                href="#chi-siamo"
-                                onClick={() => setIsOpen(false)}
-                                className="text-xl font-medium text-gray-900"
-                            >
-                                Chi siamo
-                            </a>
-
-                            <a
-                                href="#contatti"
-                                onClick={() => setIsOpen(false)}
-                                className="text-xl font-medium text-gray-900"
-                            >
-                                Contatti
-                            </a>
-                        </div>
-
-                        <div className="mt-auto flex flex-col gap-4 pt-10 border-t">
-                            <a
-                                href="/accedi"
-                                onClick={() => setIsOpen(false)}
-                                className="text-gray-800 text-lg font-medium"
-                            >
-                                Accedi
-                            </a>
-
-                            <a
-                                href="/registrati"
-                                onClick={() => setIsOpen(false)}
-                                className="px-4 py-3 bg-blue-600 text-white rounded-lg text-center text-lg font-medium hover:bg-blue-700 transition-colors"
-                            >
-                                Registrati
-                            </a>
-                        </div>
-                    </div>
-                )}
             </nav>
+
+            {/* MENU MOBILE: sotto la navbar, copre tutto il resto, sfondo pieno */}
+            {isOpen && (
+                <div className="fixed top-[56px] left-0 w-full h-[calc(100vh-56px)] bg-white z-40 flex flex-col p-8">
+                    <div className="flex flex-col gap-6 text-left">
+                        <a
+                            href="#come-funziona"
+                            onClick={() => setIsOpen(false)}
+                            className="text-xl font-medium text-gray-900"
+                        >
+                            Come funziona
+                        </a>
+
+                        <a
+                            href="#perche-zelvio"
+                            onClick={() => setIsOpen(false)}
+                            className="text-xl font-medium text-gray-900"
+                        >
+                            Perché Zelvio
+                        </a>
+
+                        <a
+                            href="#chi-siamo"
+                            onClick={() => setIsOpen(false)}
+                            className="text-xl font-medium text-gray-900"
+                        >
+                            Chi siamo
+                        </a>
+
+                        <a
+                            href="#contatti"
+                            onClick={() => setIsOpen(false)}
+                            className="text-xl font-medium text-gray-900"
+                        >
+                            Contatti
+                        </a>
+                    </div>
+
+                    <div className="mt-auto flex flex-col gap-4 pt-10 border-t">
+                        <a
+                            href="/accedi"
+                            onClick={() => setIsOpen(false)}
+                            className="text-gray-800 text-lg font-medium"
+                        >
+                            Accedi
+                        </a>
+
+                        <a
+                            href="/registrati"
+                            onClick={() => setIsOpen(false)}
+                            className="px-4 py-3 bg-blue-600 text-white rounded-lg text-center text-lg font-medium hover:bg-blue-700 transition-colors"
+                        >
+                            Registrati
+                        </a>
+                    </div>
+                </div>
+            )}
         </header>
     );
 }
