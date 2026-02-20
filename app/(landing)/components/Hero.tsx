@@ -12,13 +12,13 @@ export default function Hero() {
                     </h1>
 
                     {/* Primo paragrafo */}
-                    <p className="text-[16px] text-gray-900 max-w-md mx-auto md:mx-0 leading-[1.45] mt-4">
+                    <p className="text-[17px] md:text-[18px] text-gray-900 max-w-md mx-auto md:mx-0 leading-[1.45] mt-4">
                         Presenta ai tuoi clienti documenti chiari, accurati e impeccabili,
                         progettati per distinguerti dalla concorrenza.
                     </p>
 
                     {/* Secondo paragrafo */}
-                    <p className="mt-5 text-gray-800 text-[15px] max-w-md mx-auto md:mx-0 leading-[1.55]">
+                    <p className="mt-5 text-gray-800 text-[16px] md:text-[17px] max-w-md mx-auto md:mx-0 leading-[1.55]">
                         Zelvio trasforma il processo di preventivazione in un flusso semplice e guidato,
                         aiutandoti a lavorare meglio, più velocemente e con un’immagine aziendale superiore.
                     </p>
