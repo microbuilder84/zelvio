@@ -49,12 +49,11 @@ export default function Navbar() {
 
     return (
         <header className="
-            fixed top-0 left-0 w-full 
-            bg-white 
-            md:bg-white/80 md:backdrop-blur-md 
-            border-b border-gray-200 
-            z-50 transition-all duration-300
-        ">
+        fixed top-0 left-0 w-full 
+        bg-red-500 
+        border-b border-gray-200 
+        z-50
+    ">
             <nav className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
 
                 {/* LOGO */}
