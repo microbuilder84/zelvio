@@ -53,7 +53,7 @@ export default function Navbar() {
             bg-white 
             border-b border-gray-200 
             z-40
-            ">
+        ">
             <nav className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
 
                 {/* LOGO */}
@@ -103,7 +103,7 @@ export default function Navbar() {
 
                 {/* HAMBURGER MENU (MOBILE) */}
                 <button
-                    className="md:hidden flex flex-col gap-[4px] mr-2 z-30"
+                    className="md:hidden flex flex-col gap-[4px] mr-2 z-50"
                     onClick={() => setIsOpen(!isOpen)}
                     aria-label="Toggle menu"
                 >
@@ -121,12 +121,12 @@ export default function Navbar() {
                     ></span>
                 </button>
 
-                {/* MENU MOBILE FULLSCREEN */}
+                {/* MENU MOBILE FULLSCREEN CHE COPRE ANCHE LA NAVBAR */}
                 {isOpen && (
                     <div
-                        className="fixed inset-0 bg-white z-50 flex flex-col p-8 animate-fadeIn"
+                        className="fixed inset-0 top-0 left-0 w-full h-full bg-white z-50 flex flex-col p-8 animate-fadeIn"
                     >
-                        <div className="flex flex-col gap-6 mt-10 text-left">
+                        <div className="flex flex-col gap-6 mt-20 text-left">
 
                             <a
                                 href="#come-funziona"
