@@ -6,7 +6,7 @@ export default function Navbar() {
     const [activeSection, setActiveSection] = useState("");
     const [isOpen, setIsOpen] = useState(false);
 
-    // Evidenziazione sezione attiva (solo logica, non tocca il menu)
+    // Evidenziazione sezione attiva
     useEffect(() => {
         const sections = [
             "come-funziona",
@@ -41,11 +41,7 @@ export default function Navbar() {
 
     // Blocca lo scroll quando il menu mobile è aperto
     useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = "hidden";
-        } else {
-            document.body.style.overflow = "";
-        }
+        document.body.style.overflow = isOpen ? "hidden" : "";
     }, [isOpen]);
 
     const linkClass = (id: string) =>
@@ -126,7 +122,7 @@ export default function Navbar() {
                 </button>
             </nav>
 
-            {/* MENU MOBILE: sotto la navbar, copre tutto il resto, sfondo pieno */}
+            {/* MENU MOBILE */}
             {isOpen && (
                 <div className="fixed top-[56px] left-0 w-full h-[calc(100vh-56px)] bg-white z-40 flex flex-col p-8">
                     <div className="flex flex-col gap-6 text-left">
@@ -163,7 +159,8 @@ export default function Navbar() {
                         </a>
                     </div>
 
-                    <div className="mt-auto flex flex-col gap-4 pt-10 border-t">
+                    {/* BLOCCO FINALE MIGLIORATO */}
+                    <div className="mt-auto flex flex-col gap-5 pt-8 pb-16 border-t">
                         <a
                             href="/accedi"
                             onClick={() => setIsOpen(false)}
