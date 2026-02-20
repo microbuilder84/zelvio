@@ -2,8 +2,8 @@
 
 export default function Hero() {
     return (
-        <section className="pt-40 pb-36 bg-gradient-to-b from-white to-gray-50">
-            <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-24">
+        <section className="pt-32 pb-28 bg-gradient-to-b from-white to-gray-50">
+            <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-20">
 
                 {/* Testo */}
                 <div className="flex-1 md:pr-16 text-center md:text-left">
@@ -11,13 +11,13 @@ export default function Hero() {
                         Eleva ogni preventivo<br />al livello dei veri professionisti
                     </h1>
 
-                    {/* Primo paragrafo – premium */}
+                    {/* Primo paragrafo */}
                     <p className="text-[17px] text-gray-900 max-w-md mx-auto md:mx-0 leading-[1.45] mt-5">
                         Presenta ai tuoi clienti documenti chiari, accurati e impeccabili,
                         progettati per distinguerti dalla concorrenza.
                     </p>
 
-                    {/* Secondo paragrafo – premium */}
+                    {/* Secondo paragrafo */}
                     <p className="mt-6 text-gray-800 text-base max-w-md mx-auto md:mx-0 leading-[1.55]">
                         Zelvio trasforma il processo di preventivazione in un flusso semplice e guidato,
                         aiutandoti a lavorare meglio, più velocemente e con un’immagine aziendale superiore.
@@ -27,10 +27,10 @@ export default function Hero() {
                     <div className="mt-10 flex flex-col items-center md:items-start">
                         <a
                             href="/wizard"
-                            className="px-12 py-5 bg-blue-600 text-white font-semibold rounded-xl 
-                                       shadow-md hover:shadow-xl 
-                                       hover:bg-blue-700 
-                                       transition-all duration-200 ease-out 
+                            className="px-12 py-5 bg-blue-600 text-white font-semibold rounded-xl
+                                       shadow-md hover:shadow-xl
+                                       hover:bg-blue-700
+                                       transition-all duration-200 ease-out
                                        text-xl flex items-center gap-3
                                        hover:scale-[1.02] active:scale-[0.98]
                                        hover:-translate-y-[1px]"
@@ -49,10 +49,11 @@ export default function Hero() {
                         <div className="w-[22rem] h-[22rem] md:w-[26rem] md:h-[26rem] bg-blue-200 rounded-full blur-[140px] opacity-20"></div>
                     </div>
 
-                    {/* Frame premium */}
-                    <div className="rounded-2xl shadow-2xl border border-gray-200 overflow-hidden bg-white/90 backdrop-blur-sm 
-                                    transform rotate-[1deg] hover:rotate-0 transition-all duration-700 
-                                    w-[330px] md:w-[400px]">
+                    {/* Frame premium — DRITTO */}
+                    <div
+                        className="rounded-2xl shadow-2xl border border-gray-200 overflow-hidden bg-white/90 backdrop-blur-sm
+                                   w-[330px] md:w-[400px] transition-all duration-700"
+                    >
                         <img
                             src="/preventivo-intervento-zelvio.png"
                             alt="Anteprima Zelvio"

@@ -48,7 +48,7 @@ export default function Navbar() {
 
     return (
         <header className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md border-b border-gray-200 z-50 transition-all duration-300">
-            <nav className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+            <nav className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
 
                 {/* LOGO */}
                 <a
@@ -97,18 +97,21 @@ export default function Navbar() {
 
                 {/* HAMBURGER MENU (MOBILE) */}
                 <button
-                    className="md:hidden flex flex-col gap-[5px] z-50"
+                    className="md:hidden flex flex-col gap-[4px] mr-2 z-50"
                     onClick={() => setIsOpen(!isOpen)}
                     aria-label="Toggle menu"
                 >
                     <span
-                        className={`h-[2px] w-6 bg-gray-900 transition-all duration-300 ${isOpen ? "rotate-45 translate-y-[7px]" : ""}`}
+                        className={`h-[2px] w-5 bg-gray-900 transition-all duration-300 ${isOpen ? "rotate-45 translate-y-[6px]" : ""
+                            }`}
                     ></span>
                     <span
-                        className={`h-[2px] w-6 bg-gray-900 transition-all duration-300 ${isOpen ? "opacity-0" : ""}`}
+                        className={`h-[2px] w-5 bg-gray-900 transition-all duration-300 ${isOpen ? "opacity-0" : ""
+                            }`}
                     ></span>
                     <span
-                        className={`h-[2px] w-6 bg-gray-900 transition-all duration-300 ${isOpen ? "-rotate-45 -translate-y-[7px]" : ""}`}
+                        className={`h-[2px] w-5 bg-gray-900 transition-all duration-300 ${isOpen ? "-rotate-45 -translate-y-[6px]" : ""
+                            }`}
                     ></span>
                 </button>
 
