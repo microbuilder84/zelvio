@@ -6,22 +6,6 @@ export default function Navbar() {
     const [activeSection, setActiveSection] = useState("");
     const [isOpen, setIsOpen] = useState(false);
 
-    // 🔒 Blocca lo scroll quando il menu è aperto
-    useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = "hidden";
-        } else {
-            document.body.style.overflow = "";
-        }
-    }, [isOpen]);
-
-    // 🔒 Chiudi il menu quando scrolli
-    useEffect(() => {
-        const closeOnScroll = () => setIsOpen(false);
-        window.addEventListener("scroll", closeOnScroll);
-        return () => window.removeEventListener("scroll", closeOnScroll);
-    }, []);
-
     // Evidenziazione sezione attiva
     useEffect(() => {
         const sections = [
@@ -64,7 +48,7 @@ export default function Navbar() {
         }`;
 
     return (
-        <header className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md border-b border-gray-200 z-50 transition-all duration-300">
+        <header className="fixed top-0 left-0 w-full bg-white md:bg-white/80 md:backdrop-blur-md border-b border-gray-200 z-50 transition-all duration-300">
             <nav className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
 
                 {/* LOGO */}
@@ -132,20 +116,17 @@ export default function Navbar() {
                     ></span>
                 </button>
 
-                {/* OVERLAY + MENU MOBILE */}
+                {/* MENU MOBILE FULLSCREEN */}
                 {isOpen && (
                     <div
-                        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300"
-                        onClick={() => setIsOpen(false)}
+                        className="fixed inset-0 bg-white z-40 flex flex-col p-8 animate-fadeIn"
                     >
-                        <div
-                            className="absolute right-0 top-0 h-full w-[75%] max-w-[320px] bg-white/95 shadow-[0_4px_20px_rgba(0,0,0,0.12)] p-6 flex flex-col gap-6 animate-slideIn"
-                            onClick={(e) => e.stopPropagation()}
-                        >
+                        <div className="flex flex-col gap-6 mt-10 text-left">
+
                             <a
                                 href="#come-funziona"
                                 onClick={() => setIsOpen(false)}
-                                className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors"
+                                className="text-xl font-medium text-gray-900"
                             >
                                 Come funziona
                             </a>
@@ -153,7 +134,7 @@ export default function Navbar() {
                             <a
                                 href="#perche-zelvio"
                                 onClick={() => setIsOpen(false)}
-                                className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors"
+                                className="text-xl font-medium text-gray-900"
                             >
                                 Perché Zelvio
                             </a>
@@ -161,7 +142,7 @@ export default function Navbar() {
                             <a
                                 href="#chi-siamo"
                                 onClick={() => setIsOpen(false)}
-                                className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors"
+                                className="text-xl font-medium text-gray-900"
                             >
                                 Chi siamo
                             </a>
@@ -169,28 +150,28 @@ export default function Navbar() {
                             <a
                                 href="#contatti"
                                 onClick={() => setIsOpen(false)}
-                                className="text-lg font-medium text-gray-800 hover:text-blue-600 transition-colors"
+                                className="text-xl font-medium text-gray-900"
                             >
                                 Contatti
                             </a>
+                        </div>
 
-                            <div className="mt-auto flex flex-col gap-4 pt-4 border-t">
-                                <a
-                                    href="/accedi"
-                                    onClick={() => setIsOpen(false)}
-                                    className="text-gray-700 text-lg font-medium hover:text-blue-600 transition-colors"
-                                >
-                                    Accedi
-                                </a>
+                        <div className="mt-auto flex flex-col gap-4 pt-10 border-t">
+                            <a
+                                href="/accedi"
+                                onClick={() => setIsOpen(false)}
+                                className="text-gray-800 text-lg font-medium"
+                            >
+                                Accedi
+                            </a>
 
-                                <a
-                                    href="/registrati"
-                                    onClick={() => setIsOpen(false)}
-                                    className="px-4 py-3 bg-blue-600 text-white rounded-lg text-center text-lg font-medium hover:bg-blue-700 transition-colors"
-                                >
-                                    Registrati
-                                </a>
-                            </div>
+                            <a
+                                href="/registrati"
+                                onClick={() => setIsOpen(false)}
+                                className="px-4 py-3 bg-blue-600 text-white rounded-lg text-center text-lg font-medium hover:bg-blue-700 transition-colors"
+                            >
+                                Registrati
+                            </a>
                         </div>
                     </div>
                 )}
