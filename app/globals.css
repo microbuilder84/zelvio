@@ -1,17 +1,18 @@
 @import "tailwindcss";
 
-/* ⭐ Smooth Scroll globale */
+/* ---------------------------------------------- */
+/* ⭐ Smooth Scroll globale                        */
+/* ---------------------------------------------- */
 html {
   scroll-behavior: smooth;
 }
 
+/* ---------------------------------------------- */
+/* ⭐ DESIGN SYSTEM — ZELVIO OFFICIAL TOKENS       */
+/* ---------------------------------------------- */
 :root {
   --background: #ffffff;
   --foreground: #171717;
-
-  /* ---------------------------------------------- */
-  /* ⭐ DESIGN SYSTEM — ZELVIO OFFICIAL TOKENS       */
-  /* ---------------------------------------------- */
 
   /* Palette colori */
   --color-primary: #2563EB;
@@ -43,83 +44,59 @@ body {
 }
 
 /* -------------------------------------------------- */
-/* ⭐ UI ENHANCEMENTS — MICRO‑ANIMAZIONI PREMIUM INPUT */
+/* ⭐ UI ENHANCEMENTS — INPUT PREMIUM                 */
 /* -------------------------------------------------- */
-
-/* Transizione morbida per tutti gli input */
 input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Effetto hover: leggero lift */
 input:hover {
   transform: translateY(-1px);
 }
 
-/* Effetto focus: glow elegante + lift */
 input:focus {
   transform: translateY(-2px);
+  border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-  /* blu premium */
+}
+
+input::placeholder {
+  color: #9ca3af;
+  opacity: 0.9;
+  transition: opacity 0.25s ease;
+}
+
+input:focus::placeholder {
+  opacity: 0.5;
 }
 
 /* -------------------------------------------------- */
-/* ⭐ UI ENHANCEMENTS — MICRO‑ANIMAZIONI PULSANTI */
+/* ⭐ UI ENHANCEMENTS — BUTTON PREMIUM                */
 /* -------------------------------------------------- */
-
-/* Transizione morbida per tutti i pulsanti */
 button {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Hover: leggero lift + intensificazione colore */
 button:hover {
   transform: translateY(-2px);
   filter: brightness(1.05);
 }
 
-/* Press: effetto "click" professionale */
 button:active {
   transform: translateY(0px) scale(0.97);
   filter: brightness(0.95);
 }
 
-/* Focus: glow elegante */
 button:focus {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
 }
 
 /* -------------------------------------------------- */
-/* ⭐ UI ENHANCEMENTS — PLACEHOLDER + INPUT ELEGANTI */
+/* ⭐ ANIMAZIONI GLOBALI                              */
 /* -------------------------------------------------- */
-
-/* Placeholder più elegante e leggibile */
-input::placeholder {
-  color: #9ca3af;
-  /* grigio Tailwind premium */
-  opacity: 0.9;
-  transition: opacity 0.25s ease;
-}
-
-/* Quando l'input è in focus, il placeholder svanisce leggermente */
-input:focus::placeholder {
-  opacity: 0.5;
-}
-
-/* Bordi più morbidi e moderni */
-input {
-  border-radius: 8px;
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  /* grigio chiaro */
-}
-
-/* Focus ring più premium */
-input:focus {
-  border-color: #3b82f6;
-  /* blu Tailwind */
-}
-
 @keyframes slideIn {
   from {
     transform: translateX(100%);
@@ -134,10 +111,6 @@ input:focus {
   animation: slideIn 0.3s ease-out forwards;
 }
 
-.fade {
-  animation: fadeIn 0.35s ease;
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -148,4 +121,8 @@ input:focus {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.fade {
+  animation: fadeIn 0.35s ease;
 }

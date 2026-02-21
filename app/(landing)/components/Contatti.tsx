@@ -13,18 +13,19 @@ export default function Contatti() {
                 </h2>
 
                 <p
-                    className="mt-5 md:mt-6 text-gray-600 max-w-md mx-auto leading-[1.65]
-                               text-[15px] md:text-base"
+                    className="mt-5 md:mt-6 max-w-md mx-auto
+                               text-[15px] md:text-base text-gray-600 leading-[1.65]"
                 >
                     Per informazioni, richieste o supporto puoi contattarci tramite email.
                 </p>
 
-                <div className="mt-8 md:mt-8 text-gray-700">
-                    <p className="text-base md:text-lg flex flex-col items-center gap-1 md:flex-row md:justify-center">
+                <div className="mt-8 text-gray-700">
+                    <p className="flex flex-col items-center gap-1 text-base md:text-lg md:flex-row md:justify-center">
                         <span className="font-semibold">Email:</span>
                         <a
                             href="mailto:info@zelvio.com"
-                            className="text-blue-600 underline-offset-2 hover:underline md:hover:opacity-80 transition-opacity duration-200"
+                            className="text-blue-600 underline-offset-2 hover:underline
+                                       md:hover:opacity-80 transition-opacity duration-200"
                         >
                             info@zelvio.com
                         </a>

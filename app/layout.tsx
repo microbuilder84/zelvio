@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-// ⭐ Import della Navbar
 import Navbar from "./components/ui/Navbar";
 
 const geistSans = Geist({
@@ -15,7 +14,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// ⭐ Metadata completo e definitivo
 export const metadata: Metadata = {
   title: "Zelvio — Preventivi in pochi minuti",
   description:
@@ -56,20 +54,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="it">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-gray-900`}
       >
-        {/* ⭐ Navbar sticky premium */}
         <div className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-gray-200">
           <Navbar />
         </div>
 
-        {/* ⭐ Contenuto della pagina */}
         <main className="overflow-x-hidden">{children}</main>
       </body>
     </html>

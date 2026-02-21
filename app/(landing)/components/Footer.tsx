@@ -8,7 +8,7 @@ export default function Footer() {
             <div className="max-w-4xl mx-auto px-6 text-center text-gray-600">
 
                 <p
-                    className="font-semibold text-gray-800 text-base md:text-lg
+                    className="text-base md:text-lg font-semibold text-gray-800
                                transition-opacity duration-300 md:hover:opacity-90"
                 >
                     Zelvio
