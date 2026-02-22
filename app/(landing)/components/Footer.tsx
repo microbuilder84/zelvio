@@ -21,6 +21,39 @@ export default function Footer() {
                     © {new Date().getFullYear()} Zelvio. Tutti i diritti riservati.
                 </p>
 
+                {/* ⭐ Link legali */}
+                <div className="mt-4 flex flex-col items-center gap-1 text-xs md:text-sm opacity-80">
+
+                    <a
+                        href="/privacy"
+                        className="hover:underline transition-opacity duration-300 md:hover:opacity-90"
+                    >
+                        Privacy Policy
+                    </a>
+
+                    <a
+                        href="/termini"
+                        className="hover:underline transition-opacity duration-300 md:hover:opacity-90"
+                    >
+                        Termini & Condizioni
+                    </a>
+
+                    <a
+                        href="/cookie"
+                        className="hover:underline transition-opacity duration-300 md:hover:opacity-90"
+                    >
+                        Cookie Policy
+                    </a>
+
+                    <a
+                        href="/legal"
+                        className="hover:underline transition-opacity duration-300 md:hover:opacity-90"
+                    >
+                        Legal
+                    </a>
+
+                </div>
+
             </div>
         </footer>
     );
