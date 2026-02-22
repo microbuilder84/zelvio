@@ -7,6 +7,10 @@ export default function CookiePage() {
     return (
         <main className="max-w-3xl mx-auto px-6 py-20 text-gray-800 leading-relaxed">
 
+            <a href="/" className="text-sm opacity-70 hover:opacity-100 block mb-6">
+                ← Torna alla home
+            </a>
+
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
                 Cookie Policy
             </h1>

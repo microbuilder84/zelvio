@@ -60,10 +60,10 @@ export default function Navbar() {
 
                 {/* Link centrali (desktop) */}
                 <div className="hidden md:flex items-center gap-10 font-medium px-6">
-                    <a href="#come-funziona" className={linkClass("come-funziona")}>Come funziona</a>
-                    <a href="#perche-zelvio" className={linkClass("perche-zelvio")}>Perché Zelvio</a>
-                    <a href="#chi-siamo" className={linkClass("chi-siamo")}>Chi siamo</a>
-                    <a href="#contatti" className={linkClass("contatti")}>Contatti</a>
+                    <a href="/#come-funziona" className={linkClass("come-funziona")}>Come funziona</a>
+                    <a href="/#perche-zelvio" className={linkClass("perche-zelvio")}>Perché Zelvio</a>
+                    <a href="/#chi-siamo" className={linkClass("chi-siamo")}>Chi siamo</a>
+                    <a href="/#contatti" className={linkClass("contatti")}>Contatti</a>
                 </div>
 
                 {/* Bottoni destra (desktop) */}
