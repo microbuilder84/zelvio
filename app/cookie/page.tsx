@@ -40,7 +40,7 @@ export default function CookiePage() {
             <p className="mb-6">
                 Per informazioni:{" "}
                 <a href="mailto:info@zelvioapp.com" className="text-blue-600 underline">
-                    info@zelvio.com
+                    info@zelvioapp.com
                 </a>.
             </p>
 

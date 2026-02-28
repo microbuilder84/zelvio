@@ -25,13 +25,13 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   alternates: {
-    canonical: "https://zelvio.com",
+    canonical: "https://zelvioapp.com",
   },
   openGraph: {
     title: "Zelvio — Preventivi in pochi minuti",
     description:
       "Crea preventivi chiari e professionali in pochi minuti. Zelvio è lo strumento semplice e veloce per tecnici e installatori.",
-    url: "https://zelvio.com",
+    url: "https://zelvioapp.com",
     siteName: "Zelvio",
     images: [
       {

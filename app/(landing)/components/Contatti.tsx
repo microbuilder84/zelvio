@@ -23,7 +23,7 @@ export default function Contatti() {
                     <p className="flex flex-col items-center gap-1 text-base md:text-lg md:flex-row md:justify-center">
                         <span className="font-semibold">Email:</span>
                         <a
-                            href="mailto:info@zelvio.com"
+                            href="mailto:info@zelvioapp.com"
                             className="text-blue-600 underline-offset-2 hover:underline
                                        md:hover:opacity-80 transition-opacity duration-200"
                         >

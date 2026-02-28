@@ -25,7 +25,7 @@ export default function PrivacyPage() {
             <p className="mb-6">
                 Il titolare del trattamento è Zelvio. Per qualsiasi richiesta è possibile contattarci via email:{" "}
                 <a href="mailto:info@zelvioapp.com" className="text-blue-600 underline">
-                    info@zelvio.com
+                    info@zelvioapp.com
                 </a>.
             </p>
 
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
             <p className="mb-6">
                 Per esercitare i diritti:{" "}
                 <a href="mailto:info@zelvioapp.com" className="text-blue-600 underline">
-                    info@zelvio.com
+                    info@zelvioapp.com
                 </a>.
             </p>
 

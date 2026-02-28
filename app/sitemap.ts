@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = "https://zelvio.com";
+    const baseUrl = "https://zelvioapp.com";
 
     return [
         {
