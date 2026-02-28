@@ -102,7 +102,7 @@ export default function WizardPage() {
         newErrors.intervento = "Seleziona il tipo di intervento.";
 
       if (!formData.modello)
-        newErrors.modello = "Inserisci il modello del climatizzatore.";
+        newErrors.modello = "Inserisci il modello.";
 
       if (!formData.potenza)
         newErrors.potenza = "Inserisci la potenza.";

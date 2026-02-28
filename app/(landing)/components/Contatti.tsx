@@ -27,7 +27,7 @@ export default function Contatti() {
                             className="text-blue-600 underline-offset-2 hover:underline
                                        md:hover:opacity-80 transition-opacity duration-200"
                         >
-                            info@zelvio.com
+                            info@zelvioapp.com
                         </a>
                     </p>
                 </div>
