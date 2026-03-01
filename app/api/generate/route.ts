@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { WizardSchema } from "@/lib/wizardSchema";
 
 // ============ CONFIG (tweak safe) ============
 const PAYLOAD_MAX_CHARS = 20_000; // ~20KB
@@ -45,11 +46,11 @@ function jsonError(message: string, status: number, extraHeaders?: Record<string
 
 // ============ MAIN ============
 export async function POST(req: NextRequest) {
-    const requestId =
-        req.headers.get("x-request-id") || crypto.randomUUID();
+    const requestId = req.headers.get("x-request-id") || crypto.randomUUID();
 
     const ip = getIp(req);
     const limited = rateLimit(ip);
+
     if (!limited.ok) {
         return jsonError("Troppi tentativi. Riprova tra poco.", 429, {
             "x-request-id": requestId,
@@ -61,6 +62,7 @@ export async function POST(req: NextRequest) {
     try {
         // ---- Read as text first to cap payload ----
         const raw = await req.text();
+
         if (raw.length > PAYLOAD_MAX_CHARS) {
             return jsonError("Dati troppo lunghi. Riduci note e richieste.", 413, {
                 "x-request-id": requestId,
@@ -68,7 +70,7 @@ export async function POST(req: NextRequest) {
             });
         }
 
-        let body: any;
+        let body: unknown;
         try {
             body = JSON.parse(raw);
         } catch {
@@ -78,68 +80,16 @@ export async function POST(req: NextRequest) {
             });
         }
 
-        // ⭐ FUNZIONE DI ERRORE (400)
-        const fail = (msg: string) =>
-            NextResponse.json(
-                { error: msg },
-                {
-                    status: 400,
-                    headers: {
-                        "x-request-id": requestId,
-                        "x-ratelimit-remaining": String(limited.remaining),
-                    },
-                }
-            );
+        // ============ ZOD VALIDATION (single source of truth) ============
+        const parsed = WizardSchema.safeParse(body);
+        if (!parsed.success) {
+            // Keep message generic (professional + avoids leaking internal validation rules)
+            return jsonError("Dati non validi. Controlla i campi inseriti.", 400, {
+                "x-request-id": requestId,
+                "x-ratelimit-remaining": String(limited.remaining),
+            });
+        }
 
-        // ============ SERVER VALIDATION (your logic, unchanged) ============
-        // STEP 1
-        if (!body.tipoIntervento) return fail("Tipo intervento mancante.");
-        if (!body.marcaModello) return fail("Modello mancante.");
-
-        if (!body.potenza || Number(body.potenza) <= 0) return fail("Potenza non valida.");
-        if (!body.tipologiaAmbiente) return fail("Ambiente mancante.");
-        if (!body.metratura || Number(body.metratura) <= 0) return fail("Metratura non valida.");
-
-        // STEP 2
-        if (!body.distanza || Number(body.distanza) <= 0) return fail("Distanza non valida.");
-        if (!body.altezza || Number(body.altezza) <= 0) return fail("Altezza non valida.");
-        if (!body.posizioneEsterna) return fail("Posizione esterna mancante.");
-        if (!body.tipoMuro) return fail("Tipo muro mancante.");
-
-        // STEP 4
-        if (body.costoMateriali === undefined || Number(body.costoMateriali) < 0)
-            return fail("Costo materiali non valido.");
-
-        if (body.costoManodopera === undefined || Number(body.costoManodopera) < 0)
-            return fail("Costo manodopera non valido.");
-
-        if (body.costoExtra !== "" && body.costoExtra !== undefined && Number(body.costoExtra) < 0)
-            return fail("Costo extra non valido.");
-
-        if (body.sconti !== "" && body.sconti !== undefined && Number(body.sconti) < 0)
-            return fail("Sconti non validi.");
-
-        // STEP 6
-        if (!body.azienda) return fail("Nome azienda mancante.");
-        if (!body.tecnico) return fail("Nome tecnico mancante.");
-
-        if (!body.telefono) return fail("Telefono mancante.");
-        if (!/^[0-9+\s]+$/.test(body.telefono)) return fail("Telefono non valido.");
-
-        if (!body.email) return fail("Email mancante.");
-        if (!/\S+@\S+\.\S+/.test(body.email)) return fail("Email non valida.");
-
-        if (!body.piva) return fail("Partita IVA mancante.");
-        if (!/^\d{11}$/.test(String(body.piva).replace(/\s|-/g, "")))
-            return fail("Partita IVA non valida.");
-
-        // Optional hard caps (ROI: avoids prompt explosion)
-        if (typeof body.noteTecniche === "string" && body.noteTecniche.length > 1500)
-            return fail("Note tecniche troppo lunghe (max 1500 caratteri).");
-        if (typeof body.richiesteCliente === "string" && body.richiesteCliente.length > 1500)
-            return fail("Richieste cliente troppo lunghe (max 1500 caratteri).");
-
-        // ============ PROMPT BUILD ============
         const {
             tipoIntervento,
             marcaModello,
@@ -163,8 +113,9 @@ export async function POST(req: NextRequest) {
             telefono,
             email,
             piva,
-        } = body;
+        } = parsed.data;
 
+        // ============ PROMPT BUILD ============
         const prompt = `
 Sei un tecnico professionista specializzato in installazione di climatizzatori, pompe di calore e caldaie.
 Il tuo compito è generare un preventivo tecnico completo, chiaro e professionale basato esclusivamente
@@ -173,16 +124,16 @@ sui dati forniti. Non inventare nulla. Riformula sempre in modo tecnico e profes
 ### DATI UTENTE
 Tipo intervento: ${tipoIntervento || ""}
 Marca e modello: ${marcaModello || ""}
-Potenza: ${potenza || ""}
+Potenza: ${potenza ?? ""}
 Ambiente: ${tipologiaAmbiente || ""}
-Metratura: ${metratura || ""}
+Metratura: ${metratura ?? ""}
 
-Distanza interna-esterna: ${distanza || ""}
-Altezza installazione: ${altezza || ""}
+Distanza interna-esterna: ${distanza ?? ""}
+Altezza installazione: ${altezza ?? ""}
 Posizione unità esterna: ${posizioneEsterna || ""}
 Tipo muro: ${tipoMuro || ""}
 
-Lavori extra: ${Array.isArray(lavoriExtra) ? lavoriExtra.join(", ") : (lavoriExtra || "")}
+Lavori extra: ${Array.isArray(lavoriExtra) ? lavoriExtra.join(", ") : ""}
 
 Costi:
 - Materiali: ${costoMateriali ?? ""}
@@ -255,9 +206,10 @@ Genera ora il preventivo.
             });
         } catch (err: any) {
             clearTimeout(timeout);
-            const msg = err?.name === "AbortError"
-                ? "Timeout durante la generazione. Riprova tra qualche secondo."
-                : "Errore di rete durante la generazione. Riprova.";
+            const msg =
+                err?.name === "AbortError"
+                    ? "Timeout durante la generazione. Riprova tra qualche secondo."
+                    : "Errore di rete durante la generazione. Riprova.";
             return jsonError(msg, 502, {
                 "x-request-id": requestId,
                 "x-ratelimit-remaining": String(limited.remaining),
@@ -270,17 +222,14 @@ Genera ora il preventivo.
 
         // If OpenAI returns non-OK, map to safe message (no leaking)
         if (!aiResponse.ok) {
-            // best-effort parse
-            let detail = "";
+            // best-effort parse (not exposed)
             try {
-                const j = await aiResponse.json();
-                detail = j?.error?.message ? String(j.error.message) : "";
+                await aiResponse.json();
             } catch {
                 // ignore
             }
 
             if (aiResponse.status === 401) {
-                // misconfig
                 return jsonError("Configurazione AI non valida. Contatta il supporto.", 502, {
                     "x-request-id": requestId,
                     "x-ratelimit-remaining": String(limited.remaining),
@@ -294,23 +243,16 @@ Genera ora il preventivo.
                 });
             }
 
-            // generic upstream failure
-            return jsonError(
-                "Errore temporaneo nella generazione del preventivo. Riprova.",
-                502,
-                {
-                    "x-request-id": requestId,
-                    "x-ratelimit-remaining": String(limited.remaining),
-                    "x-upstream-status": String(aiResponse.status),
-                    // NOTE: do NOT expose detail to client; keep it out
-                }
-            );
+            return jsonError("Errore temporaneo nella generazione del preventivo. Riprova.", 502, {
+                "x-request-id": requestId,
+                "x-ratelimit-remaining": String(limited.remaining),
+                "x-upstream-status": String(aiResponse.status),
+            });
         }
 
         const data = await aiResponse.json();
         const output =
-            data?.choices?.[0]?.message?.content?.trim() ||
-            "Errore nella generazione del preventivo.";
+            data?.choices?.[0]?.message?.content?.trim() || "Errore nella generazione del preventivo.";
 
         return NextResponse.json(
             { output },
@@ -324,7 +266,6 @@ Genera ora il preventivo.
             }
         );
     } catch (error) {
-        // no payload logging
         console.error(`[ZELVIO] API ERROR requestId=${requestId}`, error);
         return NextResponse.json(
             { error: "Errore interno durante la generazione del preventivo." },
