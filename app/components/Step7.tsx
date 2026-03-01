@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Stepper from "./ui/Stepper";
 import { steps } from "./ui/steps";
 import "./loader.css";
@@ -8,19 +7,23 @@ import "./loader.css";
 interface Step7Props {
     formData: any;
     onGenerate: () => void;
+    isGenerating?: boolean;
+    error?: string | null;
 }
 
-export default function Step7({ formData, onGenerate }: Step7Props) {
-    const [loading, setLoading] = useState(false);
-
+export default function Step7({
+    formData,
+    onGenerate,
+    isGenerating = false,
+    error = null,
+}: Step7Props) {
     return (
         <div className="relative space-y-10">
-
             {/* ⭐ STEPPER */}
             <Stepper steps={steps} currentStep={7} />
 
             {/* ⭐ OVERLAY ELEGANTE */}
-            {loading && (
+            {isGenerating && (
                 <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg text-center">
                         <div className="loader-dots text-lg font-semibold">
@@ -33,7 +36,6 @@ export default function Step7({ formData, onGenerate }: Step7Props) {
 
             {/* ⭐ CONTENUTO */}
             <div className="space-y-10">
-
                 {/* ⭐ TITOLO PRINCIPALE */}
                 <div>
                     <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -44,9 +46,15 @@ export default function Step7({ formData, onGenerate }: Step7Props) {
                     </p>
                 </div>
 
+                {/* ✅ ERROR BANNER (se serve) */}
+                {error ? (
+                    <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                        {error}
+                    </div>
+                ) : null}
+
                 {/* ⭐ CARD RIEPILOGO */}
                 <div className="space-y-6">
-
                     {/* STEP 1 */}
                     <div className="p-5 rounded-xl bg-gray-50 border border-gray-200 shadow-sm">
                         <h3 className="font-semibold text-lg mb-3 text-gray-800 flex items-center gap-2">
@@ -103,7 +111,6 @@ export default function Step7({ formData, onGenerate }: Step7Props) {
                             <p><strong>Sconti:</strong> € {formData.sconti}</p>
                         </div>
                     </div>
-
                 </div>
 
                 {/* ⭐ TESTO INVITO */}
@@ -113,19 +120,15 @@ export default function Step7({ formData, onGenerate }: Step7Props) {
 
                 {/* ⭐ PULSANTE GENERA */}
                 <button
-                    onClick={() => {
-                        setLoading(true);
-                        onGenerate();
-                    }}
-                    disabled={loading}
-                    className={`w-full py-3 rounded-lg font-semibold transition text-white ${loading
+                    onClick={onGenerate}
+                    disabled={isGenerating}
+                    className={`w-full py-3 rounded-lg font-semibold transition text-white ${isGenerating
                             ? "bg-gray-400 cursor-not-allowed"
                             : "bg-blue-600 hover:bg-blue-700"
                         }`}
                 >
-                    {loading ? "Generazione in corso..." : "Genera Preventivo"}
+                    {isGenerating ? "Generazione in corso..." : "Genera Preventivo"}
                 </button>
-
             </div>
         </div>
     );
