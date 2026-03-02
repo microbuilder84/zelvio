@@ -3,12 +3,14 @@
 import Stepper from "./ui/Stepper";
 import { steps } from "./ui/steps";
 import "./loader.css";
+import { useState } from "react";
 
 interface Step7Props {
     formData: any;
-    onGenerate: () => void;
+    onGenerate: () => Promise<boolean>; // ✅ changed
     isGenerating?: boolean;
     error?: string | null;
+    onBack?: () => void; // optional
 }
 
 export default function Step7({
@@ -16,7 +18,21 @@ export default function Step7({
     onGenerate,
     isGenerating = false,
     error = null,
+    onBack,
 }: Step7Props) {
+    const [localError, setLocalError] = useState<string | null>(null);
+
+    const effectiveError = error || localError;
+
+    const handleGenerate = async () => {
+        setLocalError(null);
+        const ok = await onGenerate();
+        if (!ok) {
+            // if parent didn't pass a message, show a safe default
+            setLocalError("Generazione non riuscita. Controlla la connessione e riprova.");
+        }
+    };
+
     return (
         <div className="relative space-y-10">
             {/* ⭐ STEPPER */}
@@ -26,17 +42,14 @@ export default function Step7({
             {isGenerating && (
                 <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-                        <div className="loader-dots text-lg font-semibold">
-                            Generazione in corso
-                        </div>
+                        <div className="loader-dots text-lg font-semibold">Generazione in corso</div>
                         <p className="text-gray-600 mt-2">Attendere qualche secondo…</p>
                     </div>
                 </div>
             )}
 
-            {/* ⭐ CONTENUTO */}
             <div className="space-y-10">
-                {/* ⭐ TITOLO PRINCIPALE */}
+                {/* ⭐ TITOLO */}
                 <div>
                     <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                         📄 Riepilogo Finale
@@ -46,16 +59,37 @@ export default function Step7({
                     </p>
                 </div>
 
-                {/* ✅ ERROR BANNER (se serve) */}
-                {error ? (
+                {/* ✅ ERROR BANNER + RETRY */}
+                {effectiveError ? (
                     <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-                        {error}
+                        <div className="font-semibold">Errore</div>
+                        <div className="mt-1">{effectiveError}</div>
+
+                        <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                            <button
+                                onClick={handleGenerate}
+                                disabled={isGenerating}
+                                className={`px-4 py-2 rounded-lg font-semibold text-white transition ${isGenerating ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+                                    }`}
+                            >
+                                Riprova
+                            </button>
+
+                            {onBack ? (
+                                <button
+                                    onClick={onBack}
+                                    disabled={isGenerating}
+                                    className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
+                                >
+                                    Modifica dati
+                                </button>
+                            ) : null}
+                        </div>
                     </div>
                 ) : null}
 
                 {/* ⭐ CARD RIEPILOGO */}
                 <div className="space-y-6">
-                    {/* STEP 1 */}
                     <div className="p-5 rounded-xl bg-gray-50 border border-gray-200 shadow-sm">
                         <h3 className="font-semibold text-lg mb-3 text-gray-800 flex items-center gap-2">
                             🔧 Dati iniziali intervento
@@ -69,7 +103,6 @@ export default function Step7({
                         </div>
                     </div>
 
-                    {/* STEP 2 */}
                     <div className="p-5 rounded-xl bg-gray-50 border border-gray-200 shadow-sm">
                         <h3 className="font-semibold text-lg mb-3 text-gray-800 flex items-center gap-2">
                             🏗️ Dati installazione
@@ -82,7 +115,6 @@ export default function Step7({
                         </div>
                     </div>
 
-                    {/* STEP 3 */}
                     <div className="p-5 rounded-xl bg-gray-50 border border-gray-200 shadow-sm">
                         <h3 className="font-semibold text-lg mb-3 text-gray-800 flex items-center gap-2">
                             🧩 Extra selezionati
@@ -99,7 +131,6 @@ export default function Step7({
                         )}
                     </div>
 
-                    {/* STEP 4 */}
                     <div className="p-5 rounded-xl bg-gray-50 border border-gray-200 shadow-sm">
                         <h3 className="font-semibold text-lg mb-3 text-gray-800 flex items-center gap-2">
                             💶 Costi
@@ -113,18 +144,14 @@ export default function Step7({
                     </div>
                 </div>
 
-                {/* ⭐ TESTO INVITO */}
                 <p className="text-center text-blue-600 font-semibold">
                     Premi il pulsante per generare il preventivo finale.
                 </p>
 
-                {/* ⭐ PULSANTE GENERA */}
                 <button
-                    onClick={onGenerate}
+                    onClick={handleGenerate}
                     disabled={isGenerating}
-                    className={`w-full py-3 rounded-lg font-semibold transition text-white ${isGenerating
-                            ? "bg-gray-400 cursor-not-allowed"
-                            : "bg-blue-600 hover:bg-blue-700"
+                    className={`w-full py-3 rounded-lg font-semibold transition text-white ${isGenerating ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
                         }`}
                 >
                     {isGenerating ? "Generazione in corso..." : "Genera Preventivo"}

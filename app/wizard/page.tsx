@@ -239,10 +239,9 @@ export default function WizardPage() {
   };
 
   // ✅ Robust generate (no redirect on error, no double submit)
-  const handleGenerate = async () => {
-    if (isGenerating) return;
+  const handleGenerate = async (): Promise<boolean> => {
+    if (isGenerating) return false;
 
-    // validate critical steps before calling AI
     const ok1 = validateStep(1);
     const ok2 = validateStep(2);
     const ok4 = validateStep(4);
@@ -250,12 +249,13 @@ export default function WizardPage() {
 
     if (!(ok1 && ok2 && ok4 && ok6)) {
       setGenerateError("Correggi i campi evidenziati prima di generare.");
-      // jump to the most relevant invalid step
+
       if (!ok6) setCurrentStep(6);
       else if (!ok4) setCurrentStep(4);
       else if (!ok2) setCurrentStep(2);
       else setCurrentStep(1);
-      return;
+
+      return false;
     }
 
     setIsGenerating(true);
@@ -307,27 +307,32 @@ export default function WizardPage() {
             ? "Troppi tentativi. Riprova tra poco."
             : "Errore temporaneo durante la generazione. Riprova.");
         setGenerateError(msg);
-        return;
+        return false;
       }
 
       if (!data?.output || typeof data.output !== "string") {
         setGenerateError("Risposta non valida dal server. Riprova.");
-        return;
+        return false;
+      }
+      if (data?.docId && typeof data.docId === "string") {
+        try {
+          localStorage.setItem("preventivo_doc_id", data.docId);
+        } catch {
+          // ignore
+        }
       }
 
-      try {
-        localStorage.setItem("preventivo_output", data.output);
-        localStorage.setItem("wizard_data", JSON.stringify(formData)); // backup
-      } catch {
-        setGenerateError(
-          "Impossibile salvare il preventivo sul dispositivo (modalità privata o spazio insufficiente)."
-        );
-        return;
-      }
+      localStorage.setItem("preventivo_output", data.output);
+      localStorage.setItem("wizard_data", JSON.stringify(formData));
 
-      window.location.href = "/preventivo";
+      const id = typeof data?.docId === "string" ? data.docId : "";
+      window.location.href = id
+        ? `/preventivo?id=${encodeURIComponent(id)}`
+        : "/preventivo";
+      return true;
     } catch {
       setGenerateError("Errore di rete durante la generazione. Riprova.");
+      return false;
     } finally {
       setIsGenerating(false);
     }
@@ -402,6 +407,7 @@ export default function WizardPage() {
                 onGenerate={handleGenerate}
                 isGenerating={isGenerating}
                 error={generateError}
+                onBack={() => setCurrentStep(6)}
               />
             )}
           </div>
