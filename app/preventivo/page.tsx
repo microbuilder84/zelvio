@@ -16,31 +16,6 @@ function safeSetLS(key: string, value: string) {
     } catch { }
 }
 
-async function copyToClipboard(text: string) {
-    try {
-        if (navigator?.clipboard?.writeText) {
-            await navigator.clipboard.writeText(text);
-            return true;
-        }
-    } catch { }
-
-    try {
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        ta.setAttribute("readonly", "");
-        ta.style.position = "fixed";
-        ta.style.left = "-9999px";
-        document.body.appendChild(ta);
-        ta.focus();
-        ta.select();
-        const ok = document.execCommand("copy");
-        document.body.removeChild(ta);
-        return ok;
-    } catch {
-        return false;
-    }
-}
-
 function generateNumeroPreventivo(docId?: string) {
     const oggi = new Date();
     const anno = oggi.getFullYear();
@@ -55,12 +30,10 @@ function generateNumeroPreventivo(docId?: string) {
 }
 
 export default function PreventivoPage() {
-    const [output, setOutput] = useState<string>("");
+    const [documentData, setDocumentData] = useState<any>(null);
     const [aziendaData, setAziendaData] = useState<any>(null);
-    const [dataGenerazione, setDataGenerazione] = useState<string>("");
-    const [numeroPreventivo, setNumeroPreventivo] = useState<string>("");
-    const [toast, setToast] = useState<{ type: "ok" | "err"; msg: string } | null>(null);
-    const [isRecovering, setIsRecovering] = useState(false);
+    const [numeroPreventivo, setNumeroPreventivo] = useState("");
+    const [dataGenerazione, setDataGenerazione] = useState("");
 
     useEffect(() => {
         const oggi = new Date();
@@ -70,211 +43,170 @@ export default function PreventivoPage() {
         if (savedWizard) {
             try {
                 setAziendaData(JSON.parse(savedWizard));
-            } catch {
-                setAziendaData(null);
-            }
+            } catch { }
         }
-
-        const savedOutput = safeGetLS("preventivo_output");
-        const savedDocId = safeGetLS("preventivo_doc_id");
 
         const url = new URL(window.location.href);
-        const idFromUrl = url.searchParams.get("id") || savedDocId;
+        const id = url.searchParams.get("id");
 
-        // 1️⃣ Caso normale: output presente
-        if (savedOutput && savedOutput.trim()) {
-            setOutput(savedOutput);
+        if (!id) return;
 
-            const savedNumero = safeGetLS("numero_preventivo");
-            if (savedNumero) {
-                setNumeroPreventivo(savedNumero);
-            } else {
-                const nuovo = generateNumeroPreventivo(savedDocId || undefined);
-                setNumeroPreventivo(nuovo);
-                safeSetLS("numero_preventivo", nuovo);
-            }
-
-            return;
-        }
-
-        // 2️⃣ Fallback server recovery
-        if (idFromUrl) {
-            setIsRecovering(true);
-
-            fetch(`/api/preventivo?id=${encodeURIComponent(idFromUrl)}`)
-                .then((r) => r.json().then((j) => ({ ok: r.ok, j })))
-                .then(({ ok, j }) => {
-                    if (!ok) return;
-
-                    if (typeof j?.output === "string" && j.output.trim()) {
-                        setOutput(j.output);
-                        safeSetLS("preventivo_output", j.output);
-                        safeSetLS("preventivo_doc_id", idFromUrl);
-
-                        const nuovoNumero = generateNumeroPreventivo(idFromUrl);
-                        setNumeroPreventivo(nuovoNumero);
-                        safeSetLS("numero_preventivo", nuovoNumero);
-                    }
-                })
-                .finally(() => {
-                    setIsRecovering(false);
-                });
-        }
+        fetch(`/api/preventivo?id=${encodeURIComponent(id)}`)
+            .then((r) => r.json())
+            .then((data) => {
+                if (data?.document) {
+                    setDocumentData(data.document);
+                    const numero = generateNumeroPreventivo(id);
+                    setNumeroPreventivo(numero);
+                }
+            });
     }, []);
 
-    useEffect(() => {
-        if (!toast) return;
-        const t = setTimeout(() => setToast(null), 2500);
-        return () => clearTimeout(t);
-    }, [toast]);
-
-    const isEmpty = useMemo(() => !output || output.trim().length === 0, [output]);
+    const isEmpty = useMemo(() => !documentData, [documentData]);
 
     const handlePrint = () => window.print();
 
-    const handleCopy = async () => {
-        if (isEmpty) {
-            setToast({ type: "err", msg: "Niente da copiare." });
-            return;
-        }
-        const ok = await copyToClipboard(output);
-        setToast(
-            ok
-                ? { type: "ok", msg: "Testo copiato ✅" }
-                : { type: "err", msg: "Copia non riuscita." }
-        );
-    };
-
-    const handleBackToWizard = () => {
-        safeSetLS("preventivo_output", output || "");
+    const handleNewPreventivo = () => {
+        localStorage.removeItem("wizard_data");
+        localStorage.removeItem("preventivo_doc_id");
+        localStorage.removeItem("numero_preventivo");
         window.location.href = "/wizard";
     };
 
-    const handleGoHome = () => {
-        window.location.href = "/";
-    };
+    if (isEmpty) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-100">
+                <div className="bg-white p-8 rounded-xl shadow">
+                    <p className="font-semibold mb-4">Preventivo non disponibile.</p>
+                    <button
+                        onClick={handleNewPreventivo}
+                        className="px-5 py-2 bg-blue-600 text-white rounded-lg"
+                    >
+                        Nuovo Preventivo
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    const { titolo, introduzione, descrizioneTecnica, materiali, tempiEsecuzione, costi, clausole, firma } =
+        documentData;
 
     return (
         <div className="min-h-screen bg-gray-100 flex justify-center py-12 px-4">
-            <div className="relative bg-white shadow-xl rounded-2xl p-10 w-full max-w-4xl border border-gray-200 print:border-0 print:shadow-none print:p-0">
+            <div className="bg-white shadow-xl rounded-2xl p-10 w-full max-w-4xl border border-gray-200 print:shadow-none print:border-none">
 
-                {toast && (
-                    <div
-                        className={`print:hidden absolute top-4 right-4 z-50 rounded-lg px-4 py-2 text-sm shadow ${toast.type === "ok"
-                            ? "bg-green-50 border border-green-200 text-green-800"
-                            : "bg-red-50 border border-red-200 text-red-800"
-                            }`}
-                    >
-                        {toast.msg}
-                    </div>
-                )}
-
+                {/* HEADER AZIENDA */}
                 {aziendaData && (
                     <div className="mb-10 pb-6 border-b border-gray-300 print:border-none">
-                        <h2 className="text-2xl font-bold text-gray-900">
-                            {aziendaData.azienda || "Azienda"}
-                        </h2>
-                        <p className="text-gray-700 mt-1">
-                            Tecnico: {aziendaData.tecnico || "—"}
-                        </p>
-                        <p className="text-gray-700">
-                            Tel: {aziendaData.telefono || "—"}
-                        </p>
-                        <p className="text-gray-700">
-                            Email: {aziendaData.email || "—"}
-                        </p>
-                        <p className="text-gray-700">
-                            P.IVA: {aziendaData.piva || "—"}
-                        </p>
+                        <h2 className="text-2xl font-bold">{aziendaData.azienda}</h2>
+                        <p>Tecnico: {aziendaData.tecnico}</p>
+                        <p>Tel: {aziendaData.telefono}</p>
+                        <p>Email: {aziendaData.email}</p>
+                        <p>P.IVA: {aziendaData.piva}</p>
                     </div>
                 )}
 
-                <h1 className="text-3xl font-bold mb-1 text-center text-gray-900 print:mt-0">
+                {/* TITOLO */}
+                <h1 className="text-3xl font-bold text-center">
                     PREVENTIVO N. {numeroPreventivo}
                 </h1>
-
-                <p className="text-center text-gray-600 mb-8 text-sm">
+                <p className="text-center text-sm text-gray-500 mb-8">
                     Data: {dataGenerazione}
                 </p>
 
-                {isRecovering && (
-                    <div className="text-center text-sm text-gray-500 mb-6">
-                        Recupero preventivo in corso...
-                    </div>
-                )}
+                {/* SEZIONE TITOLO DOCUMENTO */}
+                <section className="mb-8">
+                    <h2 className="text-xl font-semibold mb-2">{titolo}</h2>
+                    <p className="text-gray-700 leading-relaxed">{introduzione}</p>
+                </section>
 
-                {isEmpty ? (
-                    <div className="bg-yellow-50 border border-yellow-200 text-yellow-900 p-6 rounded-xl text-sm print:hidden">
-                        <p className="font-semibold">Preventivo non trovato.</p>
-                        <p className="mt-2">
-                            Il documento potrebbe essere scaduto o il salvataggio non disponibile.
-                            Torna al wizard e genera nuovamente il preventivo.
-                        </p>
+                {/* DESCRIZIONE TECNICA */}
+                <section className="mb-8">
+                    <h3 className="text-lg font-semibold mb-2">
+                        Descrizione tecnica dell'intervento
+                    </h3>
+                    <p className="text-gray-700 leading-relaxed">
+                        {descrizioneTecnica}
+                    </p>
+                </section>
 
-                        <div className="mt-4 flex flex-col sm:flex-row gap-3">
-                            <button
-                                onClick={handleBackToWizard}
-                                className="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                            >
-                                Torna al Wizard
-                            </button>
-                            <button
-                                onClick={handleGoHome}
-                                className="px-5 py-2.5 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
-                            >
-                                Vai alla Home
-                            </button>
+                {/* MATERIALI */}
+                <section className="mb-8">
+                    <h3 className="text-lg font-semibold mb-2">Materiali inclusi</h3>
+                    <ul className="list-disc pl-6 space-y-1">
+                        {materiali?.map((m: string, i: number) => (
+                            <li key={i}>{m}</li>
+                        ))}
+                    </ul>
+                </section>
+
+                {/* TEMPI */}
+                <section className="mb-8">
+                    <h3 className="text-lg font-semibold mb-2">Tempi di esecuzione</h3>
+                    <p>{tempiEsecuzione}</p>
+                </section>
+
+                {/* COSTI BOX PROFESSIONALE */}
+                <section className="mb-8 bg-gray-50 p-6 rounded-xl border">
+                    <h3 className="text-lg font-semibold mb-4">Costi dettagliati</h3>
+
+                    <div className="space-y-2">
+                        <div className="flex justify-between">
+                            <span>Materiali</span>
+                            <span>€ {costi.materiali}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>Manodopera</span>
+                            <span>€ {costi.manodopera}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>Extra</span>
+                            <span>€ {costi.extra}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>Sconti</span>
+                            <span>€ {costi.sconti}</span>
+                        </div>
+
+                        <div className="border-t pt-3 flex justify-between font-bold text-lg">
+                            <span>Totale finale</span>
+                            <span>€ {costi.totale}</span>
                         </div>
                     </div>
-                ) : (
-                    <>
-                        <div className="bg-gray-50 p-8 rounded-xl border border-gray-200 shadow-sm print:shadow-none print:border-none print:bg-white">
-                            <pre className="whitespace-pre-wrap text-gray-800 leading-8 text-[17px] tracking-wide">
-                                {output}
-                            </pre>
-                        </div>
+                </section>
 
-                        <div className="mt-8 bg-blue-50 border border-blue-200 text-blue-900 p-5 rounded-xl text-sm print:bg-white print:border-none">
-                            <p>
-                                La validità del presente preventivo e le eventuali condizioni economiche saranno definite con il cliente in fase di conferma.
-                            </p>
-                        </div>
+                {/* CLAUSOLE */}
+                <section className="mb-8">
+                    <h3 className="text-lg font-semibold mb-2">Clausole e condizioni</h3>
+                    <ul className="list-disc pl-6 space-y-1">
+                        {clausole?.map((c: string, i: number) => (
+                            <li key={i}>{c}</li>
+                        ))}
+                    </ul>
+                </section>
 
-                        <div className="flex flex-col sm:flex-row justify-between gap-3 mt-8 print:hidden">
-                            <button
-                                onClick={handleCopy}
-                                className="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                            >
-                                Copia Testo
-                            </button>
+                {/* FIRMA */}
+                <section className="mt-12 pt-6 border-t">
+                    <p className="font-semibold">{firma}</p>
+                </section>
 
-                            <button
-                                onClick={handlePrint}
-                                className="px-5 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-                            >
-                                Scarica PDF
-                            </button>
+                {/* ACTIONS */}
+                <div className="flex justify-between mt-10 print:hidden">
+                    <button
+                        onClick={handlePrint}
+                        className="px-5 py-2 bg-green-600 text-white rounded-lg"
+                    >
+                        Scarica PDF
+                    </button>
 
-                            <button
-                                onClick={handleBackToWizard}
-                                className="px-5 py-2.5 bg-gray-300 rounded-lg hover:bg-gray-400 transition"
-                            >
-                                Modifica Dati
-                            </button>
-                        </div>
-
-                        {aziendaData && (
-                            <div className="mt-12 pt-6 border-t border-gray-300 text-center text-gray-600 text-sm print:border-none">
-                                <p>
-                                    {aziendaData.azienda || "Azienda"} — P.IVA {aziendaData.piva || "—"}
-                                </p>
-                                <p className="mt-1">
-                                    {aziendaData.email || "—"} • {aziendaData.telefono || "—"}
-                                </p>
-                            </div>
-                        )}
-                    </>
-                )}
+                    <button
+                        onClick={handleNewPreventivo}
+                        className="px-5 py-2 bg-blue-600 text-white rounded-lg"
+                    >
+                        Nuovo Preventivo
+                    </button>
+                </div>
             </div>
         </div>
     );

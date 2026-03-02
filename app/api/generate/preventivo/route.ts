@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// usa la stessa cache globale
-type DocEntry = { output: string; createdAt: number; expiresAt: number };
+/* stessa cache globale usata in /api/generate */
+type DocEntry = {
+    document: any;
+    createdAt: number;
+    expiresAt: number;
+};
 
 const gg = globalThis as unknown as { __zelvio_docs__?: Map<string, DocEntry> };
 gg.__zelvio_docs__ ??= new Map();
@@ -15,14 +19,22 @@ function cleanupDocs() {
 }
 
 export async function GET(req: NextRequest) {
+    const requestId = req.headers.get("x-request-id") || crypto.randomUUID();
+
     cleanupDocs();
 
     const id = req.nextUrl.searchParams.get("id")?.trim();
 
-    if (!id) {
+    if (!id || id.length < 4 || id.length > 32) {
         return NextResponse.json(
-            { error: "Parametro id mancante." },
-            { status: 400 }
+            { error: "Parametro id non valido." },
+            {
+                status: 400,
+                headers: {
+                    "cache-control": "no-store",
+                    "x-request-id": requestId,
+                },
+            }
         );
     }
 
@@ -31,12 +43,25 @@ export async function GET(req: NextRequest) {
     if (!entry) {
         return NextResponse.json(
             { error: "Preventivo non trovato o scaduto. Rigenera dal wizard." },
-            { status: 404 }
+            {
+                status: 404,
+                headers: {
+                    "cache-control": "no-store",
+                    "x-request-id": requestId,
+                },
+            }
         );
     }
 
     return NextResponse.json(
-        { output: entry.output },
-        { status: 200 }
+        { document: entry.document },
+        {
+            status: 200,
+            headers: {
+                "cache-control": "no-store",
+                "x-request-id": requestId,
+                "x-doc-expires-at": String(entry.expiresAt),
+            },
+        }
     );
 }
