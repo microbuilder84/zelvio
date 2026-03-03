@@ -1,27 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
-/* stessa cache globale usata in /api/generate */
-type DocEntry = {
-    document: any;
-    createdAt: number;
-    expiresAt: number;
-};
+/* ================= SUPABASE ================= */
 
-const gg = globalThis as unknown as { __zelvio_docs__?: Map<string, DocEntry> };
-gg.__zelvio_docs__ ??= new Map();
-const DOCS = gg.__zelvio_docs__!;
-
-function cleanupDocs() {
-    const now = Date.now();
-    for (const [k, v] of DOCS.entries()) {
-        if (now > v.expiresAt) DOCS.delete(k);
-    }
-}
+const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function GET(req: NextRequest) {
     const requestId = req.headers.get("x-request-id") || crypto.randomUUID();
-
-    cleanupDocs();
 
     const id = req.nextUrl.searchParams.get("id")?.trim();
 
@@ -38,13 +26,83 @@ export async function GET(req: NextRequest) {
         );
     }
 
-    const entry = DOCS.get(id);
+    try {
+        /* ================= QUERY DB ================= */
 
-    if (!entry) {
+        const { data, error } = await supabase
+            .from("preventivi")
+            .select("contenuto, expires_at")
+            .eq("doc_id", id)
+            .single();
+
+        if (error || !data) {
+            return NextResponse.json(
+                { error: "Preventivo non trovato." },
+                {
+                    status: 404,
+                    headers: {
+                        "cache-control": "no-store",
+                        "x-request-id": requestId,
+                    },
+                }
+            );
+        }
+
+        /* ================= CONTROLLO SCADENZA ================= */
+
+        if (data.expires_at && new Date(data.expires_at) < new Date()) {
+            return NextResponse.json(
+                { error: "Preventivo scaduto." },
+                {
+                    status: 410,
+                    headers: {
+                        "cache-control": "no-store",
+                        "x-request-id": requestId,
+                    },
+                }
+            );
+        }
+
+        /* ================= PARSE JSON ================= */
+
+        let documentJson;
+
+        try {
+            documentJson =
+                typeof data.contenuto === "string"
+                    ? JSON.parse(data.contenuto)
+                    : data.contenuto;
+        } catch {
+            return NextResponse.json(
+                { error: "Errore nel formato del documento salvato." },
+                {
+                    status: 500,
+                    headers: {
+                        "cache-control": "no-store",
+                        "x-request-id": requestId,
+                    },
+                }
+            );
+        }
+
         return NextResponse.json(
-            { error: "Preventivo non trovato o scaduto. Rigenera dal wizard." },
+            { document: documentJson },
             {
-                status: 404,
+                status: 200,
+                headers: {
+                    "cache-control": "no-store",
+                    "x-request-id": requestId,
+                    "x-doc-expires-at": String(data.expires_at ?? ""),
+                },
+            }
+        );
+    } catch (err) {
+        console.error("Errore lettura preventivo:", err);
+
+        return NextResponse.json(
+            { error: "Errore interno." },
+            {
+                status: 500,
                 headers: {
                     "cache-control": "no-store",
                     "x-request-id": requestId,
@@ -52,16 +110,4 @@ export async function GET(req: NextRequest) {
             }
         );
     }
-
-    return NextResponse.json(
-        { document: entry.document },
-        {
-            status: 200,
-            headers: {
-                "cache-control": "no-store",
-                "x-request-id": requestId,
-                "x-doc-expires-at": String(entry.expiresAt),
-            },
-        }
-    );
 }
