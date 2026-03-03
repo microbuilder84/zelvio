@@ -2,12 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { WizardSchema } from "@/lib/wizardSchema";
 import { createClient } from "@supabase/supabase-js";
 
-/* ================= SUPABASE ================= */
 
-const supabase = createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 /* ================= CONFIG ================= */
 
@@ -81,6 +76,9 @@ export async function POST(req: NextRequest) {
         process.env.SUPABASE_URL!,
         process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
+
+    console.log("SUPABASE_URL_RUNTIME:", process.env.SUPABASE_URL);
+
     if (!limited.ok) {
         return jsonError("Troppi tentativi. Riprova tra poco.", 429);
     }
