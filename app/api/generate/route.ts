@@ -38,14 +38,30 @@ export async function POST(req: NextRequest) {
         }
 
         const data = await response.json();
+        const raw = data.choices?.[0]?.message?.content || "";
+
+        // Estrae solo il JSON tra { ... }
+        const jsonMatch = raw.match(/\{[\s\S]*\}/);
+
+        if (!jsonMatch) {
+            return NextResponse.json(
+                { error: "JSON non trovato nella risposta", raw },
+                { status: 500 }
+            );
+        }
+
+        let parsed;
+
+        try {
+            parsed = JSON.parse(jsonMatch[0]);
+        } catch {
+            return NextResponse.json(
+                { error: "Parsing JSON fallito", raw },
+                { status: 500 }
+            );
+        }
 
         return NextResponse.json({
-            aiRaw: data,
+            parsed,
         });
-    } catch (err: any) {
-        return NextResponse.json(
-            { error: "Errore interno", details: err?.message },
-            { status: 500 }
-        );
     }
-}
