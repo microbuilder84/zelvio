@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { WizardSchema } from "@/lib/wizardSchema";
+
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,7 +19,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await req.json();
+    const body = await req.json();
+
+    const parsedInput = WizardSchema.safeParse(body);
+
+    if (!parsedInput.success) {
+      return NextResponse.json(
+        { error: "Input non valido", details: parsedInput.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const dataInput = parsedInput.data;
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
