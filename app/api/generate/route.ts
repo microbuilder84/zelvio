@@ -43,7 +43,18 @@ export async function POST(req: NextRequest) {
         messages: [
           {
             role: "user",
-            content: 'Scrivi SOLO questo JSON: { "test": "ok" }',
+            content: `
+Genera SOLO questo JSON valido:
+
+{
+  "titolo": "${dataInput.tipoIntervento} - ${dataInput.marcaModello}",
+  "ambiente": "${dataInput.tipologiaAmbiente}",
+  "potenza": ${dataInput.potenza},
+  "totale": ${dataInput.costoMateriali + dataInput.costoManodopera + dataInput.costoExtra - dataInput.sconti}
+}
+
+Non scrivere testo fuori dal JSON.
+`,
           },
         ],
         temperature: 0,
