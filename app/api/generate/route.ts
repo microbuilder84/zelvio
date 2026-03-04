@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,7 +10,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await req.json(); // leggiamo il body anche se non lo usiamo
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return NextResponse.json(
+        { error: "Configurazione Supabase mancante" },
+        { status: 500 }
+      );
+    }
+
+    await req.json();
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -22,7 +30,7 @@ export async function POST(req: NextRequest) {
         messages: [
           {
             role: "user",
-            content: "Scrivi SOLO questo JSON: { \"test\": \"ok\" }",
+            content: 'Scrivi SOLO questo JSON: { "test": "ok" }',
           },
         ],
         temperature: 0,
@@ -60,7 +68,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({ parsed });
+    const supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
+    const { error } = await supabase
+      .from("preventivi")
+      .insert({
+        doc_id: crypto.randomUUID().slice(0, 8),
+        contenuto: JSON.stringify(parsed),
+        expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+      });
+
+    if (error) {
+      return NextResponse.json(
+        { error: "Errore salvataggio DB", details: error },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ saved: true, parsed });
   } catch (err: any) {
     return NextResponse.json(
       { error: "Errore interno", details: err?.message },
