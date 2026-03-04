@@ -195,10 +195,12 @@ Il campo firma deve essere:
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
+    const docId = crypto.randomUUID().slice(0, 8);
+
     const { error } = await supabase
       .from("preventivi")
       .insert({
-        doc_id: crypto.randomUUID().slice(0, 8),
+        doc_id: docId,
         contenuto: JSON.stringify(parsed),
         expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
       });
@@ -210,7 +212,11 @@ Il campo firma deve essere:
       );
     }
 
-    return NextResponse.json({ saved: true, document: parsed });
+    return NextResponse.json({
+      saved: true,
+      document: parsed,
+      docId
+    });
 
   } catch (err: any) {
     return NextResponse.json(
