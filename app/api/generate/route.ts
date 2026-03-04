@@ -2,9 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { WizardSchema } from "@/lib/wizardSchema";
 
+function toMoneyNumber(v: unknown) {
+  const n =
+    typeof v === "number"
+      ? v
+      : Number(String(v ?? "").replace(",", "."));
+  return Number.isFinite(n) ? n : 0;
+}
 
 export async function POST(req: NextRequest) {
   try {
+    /* ================= ENV CHECK ================= */
+
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(
         { error: "OPENAI_API_KEY mancante" },
@@ -19,18 +28,114 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
+    /* ================= VALIDAZIONE INPUT ================= */
 
+    const body = await req.json();
     const parsedInput = WizardSchema.safeParse(body);
 
     if (!parsedInput.success) {
       return NextResponse.json(
-        { error: "Input non valido", details: parsedInput.error.flatten() },
+        {
+          error: "Input non valido",
+          details: parsedInput.error.flatten(),
+        },
         { status: 400 }
       );
     }
 
     const dataInput = parsedInput.data;
+
+    const totale =
+      toMoneyNumber(dataInput.costoMateriali) +
+      toMoneyNumber(dataInput.costoManodopera) +
+      toMoneyNumber(dataInput.costoExtra) -
+      toMoneyNumber(dataInput.sconti);
+
+    /* ================= PROMPT ================= */
+
+    const prompt = `
+Sei un tecnico professionista specializzato in installazione di climatizzatori, pompe di calore e caldaie.
+
+Genera un preventivo tecnico completo, dettagliato e professionale
+basato esclusivamente sui dati forniti.
+
+Regole:
+- Non inventare nulla.
+- Non modificare i numeri.
+- Non aggiungere costi.
+- Restituisci SOLO JSON valido.
+- Nessun markdown.
+- Nessun testo fuori dal JSON.
+
+STRUTTURA OBBLIGATORIA:
+
+{
+  "intestazione": {
+    "azienda": string,
+    "tecnico": string,
+    "telefono": string,
+    "email": string,
+    "piva": string
+  },
+  "titolo": string,
+  "introduzione": string,
+  "descrizioneTecnica": string,
+  "materiali": string[],
+  "tempiInstallazione": string,
+  "costi": {
+    "materiali": number,
+    "manodopera": number,
+    "extra": number,
+    "sconti": number,
+    "totale": number
+  },
+  "clausole": string[],
+  "firma": string
+}
+
+DATI:
+
+Tipo intervento: ${dataInput.tipoIntervento}
+Marca e modello: ${dataInput.marcaModello}
+Potenza: ${dataInput.potenza}
+Ambiente: ${dataInput.tipologiaAmbiente}
+Metratura: ${dataInput.metratura}
+
+Distanza: ${dataInput.distanza}
+Altezza: ${dataInput.altezza}
+Posizione esterna: ${dataInput.posizioneEsterna}
+Tipo muro: ${dataInput.tipoMuro}
+
+Lavori extra: ${Array.isArray(dataInput.lavoriExtra) && dataInput.lavoriExtra.length
+        ? dataInput.lavoriExtra.join(", ")
+        : "nessuno"
+      }
+
+Costi:
+Materiali: ${toMoneyNumber(dataInput.costoMateriali)}
+Manodopera: ${toMoneyNumber(dataInput.costoManodopera)}
+Extra: ${toMoneyNumber(dataInput.costoExtra)}
+Sconti: ${toMoneyNumber(dataInput.sconti)}
+Totale: ${totale}
+
+Note: ${dataInput.noteTecniche || "nessuna"}
+Richieste cliente: ${dataInput.richiesteCliente || "nessuna"}
+Urgenza: ${dataInput.urgenza || "non specificata"}
+
+Installatore:
+Azienda: ${dataInput.azienda}
+Tecnico: ${dataInput.tecnico}
+Telefono: ${dataInput.telefono}
+Email: ${dataInput.email}
+P.IVA: ${dataInput.piva}
+
+Il totale deve essere esattamente ${totale}
+
+Il campo firma deve essere:
+"Tecnico responsabile: ${dataInput.tecnico} – Tel: ${dataInput.telefono} – Email: ${dataInput.email}"
+`.trim();
+
+    /* ================= OPENAI CALL ================= */
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -40,24 +145,15 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
+        temperature: 0.2,
         messages: [
           {
-            role: "user",
-            content: `
-Genera SOLO questo JSON valido:
-
-{
-  "titolo": "${dataInput.tipoIntervento} - ${dataInput.marcaModello}",
-  "ambiente": "${dataInput.tipologiaAmbiente}",
-  "potenza": ${dataInput.potenza},
-  "totale": ${dataInput.costoMateriali + dataInput.costoManodopera + dataInput.costoExtra - dataInput.sconti}
-}
-
-Non scrivere testo fuori dal JSON.
-`,
+            role: "system",
+            content:
+              "Rispondi esclusivamente con JSON valido. Nessun testo fuori dal JSON.",
           },
+          { role: "user", content: prompt },
         ],
-        temperature: 0,
       }),
     });
 
@@ -69,8 +165,8 @@ Non scrivere testo fuori dal JSON.
       );
     }
 
-    const data = await response.json();
-    const raw = data.choices?.[0]?.message?.content || "";
+    const aiData = await response.json();
+    const raw = aiData.choices?.[0]?.message?.content || "";
 
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
 
@@ -92,6 +188,8 @@ Non scrivere testo fuori dal JSON.
       );
     }
 
+    /* ================= SUPABASE SAVE ================= */
+
     const supabase = createClient(
       process.env.SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -112,7 +210,8 @@ Non scrivere testo fuori dal JSON.
       );
     }
 
-    return NextResponse.json({ saved: true, parsed });
+    return NextResponse.json({ saved: true, document: parsed });
+
   } catch (err: any) {
     return NextResponse.json(
       { error: "Errore interno", details: err?.message },
