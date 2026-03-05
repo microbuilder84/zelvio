@@ -54,18 +54,38 @@ export async function POST(req: NextRequest) {
     /* ================= PROMPT ================= */
 
     const prompt = `
-Sei un tecnico professionista specializzato in installazione di climatizzatori, pompe di calore e caldaie.
+Sei un tecnico certificato specializzato in installazione di climatizzatori, pompe di calore e impianti termici.
 
-Genera un preventivo tecnico completo, dettagliato e professionale
-basato esclusivamente sui dati forniti.
+Redigi un preventivo tecnico altamente professionale, strutturato come farebbe un'impresa certificata con esperienza sul campo.
 
-Regole:
-- Non inventare nulla.
-- Non modificare i numeri.
+Il documento deve:
+- Trasmettere competenza tecnica reale
+- Essere dettagliato e credibile
+- Essere rassicurante per il cliente
+- Non contenere frasi generiche o vaghe
+
+Regole rigide:
+- Non inventare dati.
+- Non modificare numeri o importi.
 - Non aggiungere costi.
 - Restituisci SOLO JSON valido.
 - Nessun markdown.
 - Nessun testo fuori dal JSON.
+
+Requisiti tecnici obbligatori:
+- Indicare sempre unità di misura (BTU, m², metri).
+- Motivare tecnicamente la scelta della potenza rispetto alla metratura.
+- Descrivere percorso tubazioni e modalità di fissaggio unità esterna.
+- Specificare gestione scarico condensa.
+- Includere componenti tecnici realistici nei materiali.
+- Indicare tempi di installazione coerenti con complessità intervento.
+- Usare terminologia tecnica corretta.
+
+Le clausole DEVONO includere ESATTAMENTE:
+- Il preventivo è valido per 7 giorni.
+- Eventuali lavori aggiuntivi saranno quotati separatamente previa approvazione.
+- L'intervento sarà eseguito da personale qualificato con rilascio di dichiarazione di conformità ai sensi del DM 37/08.
+- La garanzia sui materiali è di 2 anni.
 
 STRUTTURA OBBLIGATORIA:
 
@@ -93,17 +113,17 @@ STRUTTURA OBBLIGATORIA:
   "firma": string
 }
 
-DATI:
+DATI INTERVENTO:
 
 Tipo intervento: ${dataInput.tipoIntervento}
 Marca e modello: ${dataInput.marcaModello}
-Potenza: ${dataInput.potenza}
+Potenza: ${dataInput.potenza} BTU
 Ambiente: ${dataInput.tipologiaAmbiente}
-Metratura: ${dataInput.metratura}
+Metratura: ${dataInput.metratura} m²
 
-Distanza: ${dataInput.distanza}
-Altezza: ${dataInput.altezza}
-Posizione esterna: ${dataInput.posizioneEsterna}
+Distanza unità interna-esterna: ${dataInput.distanza} m
+Altezza installazione: ${dataInput.altezza} m
+Posizione unità esterna: ${dataInput.posizioneEsterna}
 Tipo muro: ${dataInput.tipoMuro}
 
 Lavori extra: ${Array.isArray(dataInput.lavoriExtra) && dataInput.lavoriExtra.length
@@ -111,25 +131,27 @@ Lavori extra: ${Array.isArray(dataInput.lavoriExtra) && dataInput.lavoriExtra.le
         : "nessuno"
       }
 
-Costi:
+COSTI:
+
 Materiali: ${toMoneyNumber(dataInput.costoMateriali)}
 Manodopera: ${toMoneyNumber(dataInput.costoManodopera)}
 Extra: ${toMoneyNumber(dataInput.costoExtra)}
 Sconti: ${toMoneyNumber(dataInput.sconti)}
 Totale: ${totale}
 
-Note: ${dataInput.noteTecniche || "nessuna"}
+Note tecniche: ${dataInput.noteTecniche || "nessuna"}
 Richieste cliente: ${dataInput.richiesteCliente || "nessuna"}
 Urgenza: ${dataInput.urgenza || "non specificata"}
 
-Installatore:
+INSTALLATORE:
+
 Azienda: ${dataInput.azienda}
 Tecnico: ${dataInput.tecnico}
 Telefono: ${dataInput.telefono}
 Email: ${dataInput.email}
 P.IVA: ${dataInput.piva}
 
-Il totale deve essere esattamente ${totale}
+Il totale deve essere ESATTAMENTE ${totale}.
 
 Il campo firma deve essere:
 "Tecnico responsabile: ${dataInput.tecnico} – Tel: ${dataInput.telefono} – Email: ${dataInput.email}"
@@ -202,7 +224,9 @@ Il campo firma deve essere:
       .insert({
         doc_id: docId,
         contenuto: JSON.stringify(parsed),
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        expires_at: new Date(
+          Date.now() + 7 * 24 * 60 * 60 * 1000
+        ).toISOString(),
       });
 
     if (error) {
@@ -217,6 +241,7 @@ Il campo firma deve essere:
       docId,
       document: parsed,
     });
+
   } catch (error) {
     console.error("Errore in /api/generate:", error);
     return NextResponse.json(
