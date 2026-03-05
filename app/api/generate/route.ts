@@ -191,8 +191,8 @@ Il campo firma deve essere:
     /* ================= SUPABASE SAVE ================= */
 
     const supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
     const docId = crypto.randomUUID().slice(0, 8);
@@ -214,13 +214,13 @@ Il campo firma deve essere:
 
     return NextResponse.json({
       saved: true,
+      docId,
       document: parsed,
-      docId
     });
-
-  } catch (err: any) {
+  } catch (error) {
+    console.error("Errore in /api/generate:", error);
     return NextResponse.json(
-      { error: "Errore interno", details: err?.message },
+      { error: "Errore interno del server" },
       { status: 500 }
     );
   }
