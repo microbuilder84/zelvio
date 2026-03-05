@@ -2,12 +2,32 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { WizardSchema } from "@/lib/wizardSchema";
 
+/* ================= UTILS ================= */
+
 function toMoneyNumber(v: unknown) {
   const n =
     typeof v === "number"
       ? v
       : Number(String(v ?? "").replace(",", "."));
   return Number.isFinite(n) ? n : 0;
+}
+
+/* ================= TEMPI DETERMINISTICI ================= */
+
+function generaTempiStimati(data: any) {
+  const metratura = Number(data.metratura);
+  const distanza = Number(data.distanza);
+  const altezza = Number(data.altezza);
+
+  if (metratura <= 30 && distanza <= 5 && altezza <= 3) {
+    return "Installazione prevista in 1 giornata lavorativa.";
+  }
+
+  if (metratura <= 60) {
+    return "Installazione prevista in 1-2 giornate lavorative.";
+  }
+
+  return "Installazione prevista in 2-3 giornate lavorative.";
 }
 
 export async function POST(req: NextRequest) {
@@ -45,6 +65,16 @@ export async function POST(req: NextRequest) {
 
     const dataInput = parsedInput.data;
 
+    /* ================= TEMPI FINALI ================= */
+
+    const tempiInstallazioneFinali =
+      dataInput.tempiInstallazione &&
+        dataInput.tempiInstallazione.trim().length > 0
+        ? dataInput.tempiInstallazione.trim()
+        : generaTempiStimati(dataInput);
+
+    /* ================= CALCOLO TOTALE ================= */
+
     const totale =
       toMoneyNumber(dataInput.costoMateriali) +
       toMoneyNumber(dataInput.costoManodopera) +
@@ -58,34 +88,14 @@ Sei un tecnico certificato specializzato in installazione di climatizzatori, pom
 
 Redigi un preventivo tecnico altamente professionale, strutturato come farebbe un'impresa certificata con esperienza sul campo.
 
-Il documento deve:
-- Trasmettere competenza tecnica reale
-- Essere dettagliato e credibile
-- Essere rassicurante per il cliente
-- Non contenere frasi generiche o vaghe
-
 Regole rigide:
 - Non inventare dati.
 - Non modificare numeri o importi.
 - Non aggiungere costi.
+- Usa ESATTAMENTE i tempi di installazione forniti.
 - Restituisci SOLO JSON valido.
 - Nessun markdown.
 - Nessun testo fuori dal JSON.
-
-Requisiti tecnici obbligatori:
-- Indicare sempre unità di misura (BTU, m², metri).
-- Motivare tecnicamente la scelta della potenza rispetto alla metratura.
-- Descrivere percorso tubazioni e modalità di fissaggio unità esterna.
-- Specificare gestione scarico condensa.
-- Includere componenti tecnici realistici nei materiali.
-- Indicare tempi di installazione coerenti con complessità intervento.
-- Usare terminologia tecnica corretta.
-
-Le clausole DEVONO includere ESATTAMENTE:
-- Il preventivo è valido per 7 giorni.
-- Eventuali lavori aggiuntivi saranno quotati separatamente previa approvazione.
-- L'intervento sarà eseguito da personale qualificato con rilascio di dichiarazione di conformità ai sensi del DM 37/08.
-- La garanzia sui materiali è di 2 anni.
 
 STRUTTURA OBBLIGATORIA:
 
@@ -131,6 +141,9 @@ Lavori extra: ${Array.isArray(dataInput.lavoriExtra) && dataInput.lavoriExtra.le
         : "nessuno"
       }
 
+TEMPI DI INSTALLAZIONE (OBBLIGATORI):
+${tempiInstallazioneFinali}
+
 COSTI:
 
 Materiali: ${toMoneyNumber(dataInput.costoMateriali)}
@@ -138,10 +151,6 @@ Manodopera: ${toMoneyNumber(dataInput.costoManodopera)}
 Extra: ${toMoneyNumber(dataInput.costoExtra)}
 Sconti: ${toMoneyNumber(dataInput.sconti)}
 Totale: ${totale}
-
-Note tecniche: ${dataInput.noteTecniche || "nessuna"}
-Richieste cliente: ${dataInput.richiesteCliente || "nessuna"}
-Urgenza: ${dataInput.urgenza || "non specificata"}
 
 INSTALLATORE:
 
@@ -152,9 +161,6 @@ Email: ${dataInput.email}
 P.IVA: ${dataInput.piva}
 
 Il totale deve essere ESATTAMENTE ${totale}.
-
-Il campo firma deve essere:
-"Tecnico responsabile: ${dataInput.tecnico} – Tel: ${dataInput.telefono} – Email: ${dataInput.email}"
 `.trim();
 
     /* ================= OPENAI CALL ================= */
@@ -190,9 +196,12 @@ Il campo firma deve essere:
     const aiData = await response.json();
     const raw = aiData.choices?.[0]?.message?.content || "";
 
-    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    /* ================= PARSING ROBUSTO ================= */
 
-    if (!jsonMatch) {
+    const start = raw.indexOf("{");
+    const end = raw.lastIndexOf("}");
+
+    if (start === -1 || end === -1) {
       return NextResponse.json(
         { error: "JSON non trovato", raw },
         { status: 500 }
@@ -200,12 +209,51 @@ Il campo firma deve essere:
     }
 
     let parsed;
-
     try {
-      parsed = JSON.parse(jsonMatch[0]);
+      parsed = JSON.parse(raw.slice(start, end + 1));
     } catch {
       return NextResponse.json(
         { error: "Parsing fallito", raw },
+        { status: 500 }
+      );
+    }
+
+    if (typeof parsed !== "object") {
+      return NextResponse.json(
+        { error: "Output AI non valido." },
+        { status: 500 }
+      );
+    }
+
+    /* ================= HARD OVERRIDE CAMPI CRITICI ================= */
+
+    parsed.costi = parsed.costi || {};
+    parsed.costi.materiali = toMoneyNumber(dataInput.costoMateriali);
+    parsed.costi.manodopera = toMoneyNumber(dataInput.costoManodopera);
+    parsed.costi.extra = toMoneyNumber(dataInput.costoExtra);
+    parsed.costi.sconti = toMoneyNumber(dataInput.sconti);
+    parsed.costi.totale = totale;
+
+    parsed.tempiInstallazione = tempiInstallazioneFinali;
+
+    parsed.clausole = [
+      "Il preventivo è valido per 7 giorni.",
+      "Eventuali lavori aggiuntivi saranno quotati separatamente previa approvazione.",
+      "L'intervento sarà eseguito da personale qualificato con rilascio di dichiarazione di conformità ai sensi del DM 37/08.",
+      "La garanzia sui materiali è di 2 anni."
+    ];
+
+    /* ================= VALIDAZIONE STRUTTURA ================= */
+
+    if (
+      !parsed.intestazione ||
+      !parsed.titolo ||
+      !parsed.descrizioneTecnica ||
+      !parsed.materiali ||
+      !parsed.costi
+    ) {
+      return NextResponse.json(
+        { error: "Output AI incompleto o malformato." },
         { status: 500 }
       );
     }

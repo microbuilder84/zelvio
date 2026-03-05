@@ -267,7 +267,7 @@ export default function WizardPage() {
               isGenerating={isGenerating}
               error={generateError}
               onBack={() => setCurrentStep(6)}
-              updateField={updateField}  // ✅ AGGIUNTO
+              updateField={updateField}
             />
           )}
         </div>

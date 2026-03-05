@@ -96,25 +96,59 @@ export default function Step7({
                     <p><strong>Tipo muro:</strong> {formData.tipoMuro || "—"}</p>
                 </div>
 
-                {/* TEMPI INSTALLAZIONE – MODIFICABILE */}
+                {/* TEMPI INSTALLAZIONE – AUTO + OVERRIDE */}
                 <div className="p-5 rounded-xl bg-gray-50 border border-gray-200 shadow-sm">
                     <h3 className="font-semibold text-lg mb-3">⏱️ Tempi di esecuzione</h3>
 
-                    <input
-                        type="text"
-                        value={formData.tempiInstallazione || ""}
-                        onChange={(e) =>
-                            updateField && updateField("tempiInstallazione", e.target.value)
+                    {(() => {
+                        const metratura = Number(formData.metratura);
+                        const distanza = Number(formData.distanza);
+                        const altezza = Number(formData.altezza);
+
+                        let stimaAutomatica = "Installazione prevista in 1 giornata lavorativa.";
+
+                        if (metratura > 30 && metratura <= 60) {
+                            stimaAutomatica = "Installazione prevista in 1-2 giornate lavorative.";
                         }
-                        placeholder="Es: 2 giorni lavorativi"
-                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                    />
 
-                    <p className="text-xs text-gray-500 mt-2">
-                        Inserisci una stima realistica (es. 1 giorno, 2-3 giorni, 4 ore…)
-                    </p>
+                        if (metratura > 60) {
+                            stimaAutomatica = "Installazione prevista in 2-3 giornate lavorative.";
+                        }
+
+                        if (distanza > 8 || altezza > 4) {
+                            stimaAutomatica = "Installazione prevista in 2-3 giornate lavorative.";
+                        }
+
+                        const valoreFinale =
+                            formData.tempiInstallazione?.trim().length > 0
+                                ? formData.tempiInstallazione
+                                : stimaAutomatica;
+
+                        return (
+                            <>
+                                <input
+                                    type="text"
+                                    value={formData.tempiInstallazione || ""}
+                                    onChange={(e) =>
+                                        updateField && updateField("tempiInstallazione", e.target.value)
+                                    }
+                                    placeholder={stimaAutomatica}
+                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                />
+
+                                {!formData.tempiInstallazione && (
+                                    <div className="mt-3 text-sm text-blue-700 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                        <strong>Stima automatica:</strong> {stimaAutomatica}
+                                    </div>
+                                )}
+
+                                <p className="text-xs text-gray-500 mt-2">
+                                    Puoi modificare la stima automatica se necessario.
+                                </p>
+                            </>
+                        );
+                    })()}
                 </div>
-
                 {/* COSTI */}
                 <div className="p-5 rounded-xl bg-gray-50 border border-gray-200 shadow-sm">
                     <h3 className="font-semibold text-lg mb-3">💶 Costi</h3>
@@ -128,8 +162,8 @@ export default function Step7({
                     onClick={handleGenerate}
                     disabled={isGenerating}
                     className={`w-full py-3 rounded-lg font-semibold text-white ${isGenerating
-                            ? "bg-gray-400 cursor-not-allowed"
-                            : "bg-blue-600 hover:bg-blue-700"
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-blue-600 hover:bg-blue-700"
                         }`}
                 >
                     {isGenerating ? "Generazione in corso..." : "Genera Preventivo"}
