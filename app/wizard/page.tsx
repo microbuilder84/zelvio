@@ -52,6 +52,7 @@ export default function WizardPage() {
     noteTecniche: "",
     richiesteCliente: "",
     urgenza: "",
+    tempiInstallazione: "",
     azienda: "",
     tecnico: "",
     telefono: "",
@@ -192,6 +193,7 @@ export default function WizardPage() {
           noteTecniche: formData.noteTecniche,
           richiesteCliente: formData.richiesteCliente,
           urgenza: formData.urgenza,
+          tempiInstallazione: formData.tempiInstallazione,  // ✅ AGGIUNTO
           azienda: formData.azienda,
           tecnico: formData.tecnico,
           telefono: formData.telefono,
@@ -265,6 +267,7 @@ export default function WizardPage() {
               isGenerating={isGenerating}
               error={generateError}
               onBack={() => setCurrentStep(6)}
+              updateField={updateField}  // ✅ AGGIUNTO
             />
           )}
         </div>

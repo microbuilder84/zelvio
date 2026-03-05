@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 function safeGetLS(key: string): string | null {
     try {
@@ -8,12 +8,6 @@ function safeGetLS(key: string): string | null {
     } catch {
         return null;
     }
-}
-
-function safeSetLS(key: string, value: string) {
-    try {
-        localStorage.setItem(key, value);
-    } catch { }
 }
 
 function generateNumeroPreventivo(docId?: string) {
@@ -34,6 +28,7 @@ export default function PreventivoPage() {
     const [aziendaData, setAziendaData] = useState<any>(null);
     const [numeroPreventivo, setNumeroPreventivo] = useState("");
     const [dataGenerazione, setDataGenerazione] = useState("");
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const oggi = new Date();
@@ -49,20 +44,24 @@ export default function PreventivoPage() {
         const url = new URL(window.location.href);
         const id = url.searchParams.get("id");
 
-        if (!id) return;
+        if (!id) {
+            setLoading(false);
+            return;
+        }
 
         fetch(`/api/preventivo?id=${encodeURIComponent(id)}`)
             .then((r) => r.json())
             .then((data) => {
                 if (data?.document) {
                     setDocumentData(data.document);
-                    const numero = generateNumeroPreventivo(id);
-                    setNumeroPreventivo(numero);
+                    setNumeroPreventivo(generateNumeroPreventivo(id));
                 }
+            })
+            .catch(() => { })
+            .finally(() => {
+                setLoading(false);
             });
     }, []);
-
-    const isEmpty = useMemo(() => !documentData, [documentData]);
 
     const handlePrint = () => window.print();
 
@@ -73,7 +72,21 @@ export default function PreventivoPage() {
         window.location.href = "/wizard";
     };
 
-    if (isEmpty) {
+    /* ================= LOADING STATE ================= */
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-100">
+                <div className="bg-white p-8 rounded-xl shadow">
+                    <p className="font-semibold">Caricamento preventivo...</p>
+                </div>
+            </div>
+        );
+    }
+
+    /* ================= ERROR STATE ================= */
+
+    if (!documentData) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-100">
                 <div className="bg-white p-8 rounded-xl shadow">
@@ -89,14 +102,21 @@ export default function PreventivoPage() {
         );
     }
 
-    const { titolo, introduzione, descrizioneTecnica, materiali, tempiEsecuzione, costi, clausole, firma } =
-        documentData;
+    const {
+        titolo,
+        introduzione,
+        descrizioneTecnica,
+        materiali,
+        tempiInstallazione,
+        costi,
+        clausole,
+        firma,
+    } = documentData;
 
     return (
         <div className="min-h-screen bg-gray-100 flex justify-center py-12 px-4">
             <div className="bg-white shadow-xl rounded-2xl p-10 w-full max-w-4xl border border-gray-200 print:shadow-none print:border-none">
 
-                {/* HEADER AZIENDA */}
                 {aziendaData && (
                     <div className="mb-10 pb-6 border-b border-gray-300 print:border-none">
                         <h2 className="text-2xl font-bold">{aziendaData.azienda}</h2>
@@ -107,21 +127,19 @@ export default function PreventivoPage() {
                     </div>
                 )}
 
-                {/* TITOLO */}
                 <h1 className="text-3xl font-bold text-center">
                     PREVENTIVO N. {numeroPreventivo}
                 </h1>
+
                 <p className="text-center text-sm text-gray-500 mb-8">
                     Data: {dataGenerazione}
                 </p>
 
-                {/* SEZIONE TITOLO DOCUMENTO */}
                 <section className="mb-8">
                     <h2 className="text-xl font-semibold mb-2">{titolo}</h2>
                     <p className="text-gray-700 leading-relaxed">{introduzione}</p>
                 </section>
 
-                {/* DESCRIZIONE TECNICA */}
                 <section className="mb-8">
                     <h3 className="text-lg font-semibold mb-2">
                         Descrizione tecnica dell'intervento
@@ -131,7 +149,6 @@ export default function PreventivoPage() {
                     </p>
                 </section>
 
-                {/* MATERIALI */}
                 <section className="mb-8">
                     <h3 className="text-lg font-semibold mb-2">Materiali inclusi</h3>
                     <ul className="list-disc pl-6 space-y-1">
@@ -141,13 +158,13 @@ export default function PreventivoPage() {
                     </ul>
                 </section>
 
-                {/* TEMPI */}
                 <section className="mb-8">
-                    <h3 className="text-lg font-semibold mb-2">Tempi di esecuzione</h3>
-                    <p>{tempiEsecuzione}</p>
+                    <h3 className="text-lg font-semibold mb-2">
+                        Tempi di esecuzione
+                    </h3>
+                    <p>{tempiInstallazione}</p>
                 </section>
 
-                {/* COSTI BOX PROFESSIONALE */}
                 <section className="mb-8 bg-gray-50 p-6 rounded-xl border">
                     <h3 className="text-lg font-semibold mb-4">Costi dettagliati</h3>
 
@@ -176,9 +193,10 @@ export default function PreventivoPage() {
                     </div>
                 </section>
 
-                {/* CLAUSOLE */}
                 <section className="mb-8">
-                    <h3 className="text-lg font-semibold mb-2">Clausole e condizioni</h3>
+                    <h3 className="text-lg font-semibold mb-2">
+                        Clausole e condizioni
+                    </h3>
                     <ul className="list-disc pl-6 space-y-1">
                         {clausole?.map((c: string, i: number) => (
                             <li key={i}>{c}</li>
@@ -186,12 +204,10 @@ export default function PreventivoPage() {
                     </ul>
                 </section>
 
-                {/* FIRMA */}
                 <section className="mt-12 pt-6 border-t">
                     <p className="font-semibold">{firma}</p>
                 </section>
 
-                {/* ACTIONS */}
                 <div className="flex justify-between mt-10 print:hidden">
                     <button
                         onClick={handlePrint}
@@ -207,6 +223,7 @@ export default function PreventivoPage() {
                         Nuovo Preventivo
                     </button>
                 </div>
+
             </div>
         </div>
     );

@@ -24,6 +24,9 @@ export const WizardSchema = z.object({
     richiesteCliente: z.string().optional(),
     urgenza: z.string().optional(),
 
+    // ✅ NUOVO CAMPO
+    tempiInstallazione: z.string().min(1, "Inserisci i tempi di esecuzione"),
+
     tecnico: z.string().min(1),
     telefono: z.string().min(1),
     email: z.string().email(),
