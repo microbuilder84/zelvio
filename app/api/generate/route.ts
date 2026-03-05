@@ -202,7 +202,7 @@ Il campo firma deve essere:
       .insert({
         doc_id: docId,
         contenuto: JSON.stringify(parsed),
-        expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
       });
 
     if (error) {
