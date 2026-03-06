@@ -44,15 +44,20 @@ export default function WizardPage() {
     altezza: "",
     posizioneEsterna: "",
     tipoMuro: "",
+
     extra: [] as string[],
+    extraPersonalizzati: [] as string[], // ✅ NUOVO
+
     costoMateriali: "",
     costoManodopera: "",
     costoExtra: "",
     sconti: "",
+
     noteTecniche: "",
     richiesteCliente: "",
     urgenza: "",
     tempiInstallazione: "",
+
     azienda: "",
     tecnico: "",
     telefono: "",
@@ -95,11 +100,14 @@ export default function WizardPage() {
     const newErrors: { [key: string]: string } = {};
 
     if (step === 1) {
-      if (!formData.intervento) newErrors.intervento = "Seleziona il tipo di intervento.";
-      if (!formData.modello) newErrors.modello = "Inserisci il modello.";
+      if (!formData.intervento)
+        newErrors.intervento = "Seleziona il tipo di intervento.";
+      if (!formData.modello)
+        newErrors.modello = "Inserisci il modello.";
       if (!formData.potenza || Number(formData.potenza) <= 0)
         newErrors.potenza = "Potenza non valida.";
-      if (!formData.ambiente) newErrors.ambiente = "Seleziona l'ambiente.";
+      if (!formData.ambiente)
+        newErrors.ambiente = "Seleziona l'ambiente.";
       if (!formData.metratura || Number(formData.metratura) <= 0)
         newErrors.metratura = "Metratura non valida.";
     }
@@ -110,16 +118,24 @@ export default function WizardPage() {
       if (!formData.altezza || Number(formData.altezza) <= 0)
         newErrors.altezza = "Altezza non valida.";
       if (!formData.posizioneEsterna)
-        newErrors.posizioneEsterna = "Seleziona la posizione esterna.";
+        newErrors.posizioneEsterna =
+          "Seleziona la posizione esterna.";
       if (!formData.tipoMuro)
         newErrors.tipoMuro = "Seleziona il tipo di muro.";
     }
 
     if (step === 4) {
-      if (formData.costoMateriali === "" || Number(formData.costoMateriali) < 0)
+      if (
+        formData.costoMateriali === "" ||
+        Number(formData.costoMateriali) < 0
+      )
         newErrors.costoMateriali = "Costo materiali non valido.";
-      if (formData.costoManodopera === "" || Number(formData.costoManodopera) < 0)
-        newErrors.costoManodopera = "Costo manodopera non valido.";
+      if (
+        formData.costoManodopera === "" ||
+        Number(formData.costoManodopera) < 0
+      )
+        newErrors.costoManodopera =
+          "Costo manodopera non valido.";
       if (Number(formData.costoExtra) < 0)
         newErrors.costoExtra = "Costo extra non valido.";
       if (Number(formData.sconti) < 0)
@@ -127,8 +143,10 @@ export default function WizardPage() {
     }
 
     if (step === 6) {
-      if (!formData.azienda) newErrors.azienda = "Inserisci il nome azienda.";
-      if (!formData.tecnico) newErrors.tecnico = "Inserisci il tecnico.";
+      if (!formData.azienda)
+        newErrors.azienda = "Inserisci il nome azienda.";
+      if (!formData.tecnico)
+        newErrors.tecnico = "Inserisci il tecnico.";
       if (!/\S+@\S+\.\S+/.test(formData.email))
         newErrors.email = "Email non valida.";
       if (!/^\d{11}$/.test(formData.piva.replace(/\s|-/g, "")))
@@ -185,15 +203,22 @@ export default function WizardPage() {
           altezza: formData.altezza,
           posizioneEsterna: formData.posizioneEsterna,
           tipoMuro: formData.tipoMuro,
-          lavoriExtra: formData.extra,
+
+          lavoriExtra: [
+            ...(formData.extra || []),
+            ...(formData.extraPersonalizzati || []),
+          ], // ✅ MERGE STRUTTURATO
+
           costoMateriali: formData.costoMateriali,
           costoManodopera: formData.costoManodopera,
           costoExtra: formData.costoExtra,
           sconti: formData.sconti,
+
           noteTecniche: formData.noteTecniche,
           richiesteCliente: formData.richiesteCliente,
           urgenza: formData.urgenza,
-          tempiInstallazione: formData.tempiInstallazione,  // ✅ AGGIUNTO
+          tempiInstallazione: formData.tempiInstallazione,
+
           azienda: formData.azienda,
           tecnico: formData.tecnico,
           telefono: formData.telefono,
@@ -229,36 +254,61 @@ export default function WizardPage() {
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center py-10">
       <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-2xl">
-
         <div className="mb-6 pb-4 border-b">
           <span className="text-sm text-gray-500">
             Step {currentStep} di {steps.length}
           </span>
 
           <div className="flex items-center gap-3 mt-2">
-            {current?.icon && <current.icon className="h-7 w-7 text-blue-600" />}
-            <h2 className="text-2xl font-bold">{current?.label}</h2>
+            {current?.icon && (
+              <current.icon className="h-7 w-7 text-blue-600" />
+            )}
+            <h2 className="text-2xl font-bold">
+              {current?.label}
+            </h2>
           </div>
         </div>
 
         <div className="min-h-[400px]">
           {currentStep === 1 && (
-            <Step1 formData={formData} updateField={updateField} errors={errors} />
+            <Step1
+              formData={formData}
+              updateField={updateField}
+              errors={errors}
+            />
           )}
           {currentStep === 2 && (
-            <Step2 formData={formData} updateField={updateField} errors={errors} />
+            <Step2
+              formData={formData}
+              updateField={updateField}
+              errors={errors}
+            />
           )}
           {currentStep === 3 && (
-            <Step3 formData={formData} updateField={updateField} />
+            <Step3
+              formData={formData}
+              updateField={updateField}
+            />
           )}
           {currentStep === 4 && (
-            <Step4 formData={formData} updateField={updateField} errors={errors} />
+            <Step4
+              formData={formData}
+              updateField={updateField}
+              errors={errors}
+            />
           )}
           {currentStep === 5 && (
-            <Step5 formData={formData} updateField={updateField} />
+            <Step5
+              formData={formData}
+              updateField={updateField}
+            />
           )}
           {currentStep === 6 && (
-            <Step6 formData={formData} updateField={updateField} errors={errors} />
+            <Step6
+              formData={formData}
+              updateField={updateField}
+              errors={errors}
+            />
           )}
           {currentStep === 7 && (
             <Step7
@@ -274,13 +324,19 @@ export default function WizardPage() {
 
         <div className="flex justify-between mt-8">
           {currentStep > 1 && (
-            <button onClick={prevStep} className="px-4 py-2 bg-gray-300 rounded">
+            <button
+              onClick={prevStep}
+              className="px-4 py-2 bg-gray-300 rounded"
+            >
               Indietro
             </button>
           )}
 
           {currentStep < 7 && (
-            <button onClick={nextStep} className="px-4 py-2 bg-blue-600 text-white rounded">
+            <button
+              onClick={nextStep}
+              className="px-4 py-2 bg-blue-600 text-white rounded"
+            >
               Avanti
             </button>
           )}

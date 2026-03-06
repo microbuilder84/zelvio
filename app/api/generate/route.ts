@@ -30,6 +30,27 @@ function generaTempiStimati(data: any) {
   return "Installazione prevista in 2-3 giornate lavorative.";
 }
 
+/* ================= NORMALIZZAZIONE EXTRA ================= */
+
+function normalizzaLavoriExtra(extra: unknown): string[] {
+  if (!Array.isArray(extra)) return [];
+
+  const clean = extra
+    .map((item) => String(item).trim())
+    .filter((item) => item.length > 0);
+
+  const uniqueMap = new Map<string, string>();
+
+  for (const item of clean) {
+    const key = item.toLowerCase();
+    if (!uniqueMap.has(key)) {
+      uniqueMap.set(key, item);
+    }
+  }
+
+  return Array.from(uniqueMap.values());
+}
+
 export async function POST(req: NextRequest) {
   try {
     /* ================= ENV CHECK ================= */
@@ -64,6 +85,12 @@ export async function POST(req: NextRequest) {
     }
 
     const dataInput = parsedInput.data;
+
+    /* ================= EXTRA NORMALIZZATI ================= */
+
+    const lavoriExtraNormalizzati = normalizzaLavoriExtra(
+      dataInput.lavoriExtra
+    );
 
     /* ================= TEMPI FINALI ================= */
 
@@ -136,8 +163,8 @@ Altezza installazione: ${dataInput.altezza} m
 Posizione unità esterna: ${dataInput.posizioneEsterna}
 Tipo muro: ${dataInput.tipoMuro}
 
-Lavori extra: ${Array.isArray(dataInput.lavoriExtra) && dataInput.lavoriExtra.length
-        ? dataInput.lavoriExtra.join(", ")
+Lavori extra: ${lavoriExtraNormalizzati.length
+        ? lavoriExtraNormalizzati.join(", ")
         : "nessuno"
       }
 
@@ -242,6 +269,8 @@ Il totale deve essere ESATTAMENTE ${totale}.
       "L'intervento sarà eseguito da personale qualificato con rilascio di dichiarazione di conformità ai sensi del DM 37/08.",
       "La garanzia sui materiali è di 2 anni."
     ];
+
+    parsed.materiali = normalizzaLavoriExtra(parsed.materiali);
 
     /* ================= VALIDAZIONE STRUTTURA ================= */
 
