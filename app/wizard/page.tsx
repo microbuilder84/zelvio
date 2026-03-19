@@ -45,7 +45,10 @@ export default function WizardPage() {
     extra: [] as string[],
     extraPersonalizzati: [] as string[], // ✅ NUOVO
 
-    costoMateriali: "",
+    materialiRighe: [{ descrizione: "", prezzo: "" }] as Array<{
+      descrizione: string;
+      prezzo: string | number;
+    }>,
     costoManodopera: "",
     costoExtra: "",
     sconti: "",
@@ -58,13 +61,14 @@ export default function WizardPage() {
     clienteIndirizzo: "",
 
     azienda: "",
+    indirizzoAzienda: "",
     tecnico: "",
     telefono: "",
     email: "",
     piva: "",
   });
 
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [errors, setErrors] = useState<Record<string, any>>({});
   const [isGenerating, setIsGenerating] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
 
@@ -96,7 +100,7 @@ export default function WizardPage() {
   /* ================= VALIDAZIONE STEP ================= */
 
   const validateStep = (step: number) => {
-    const newErrors: { [key: string]: string } = {};
+    const newErrors: Record<string, any> = {};
 
     if (step === 1) {
       if (!formData.intervento)
@@ -124,11 +128,42 @@ export default function WizardPage() {
     }
 
     if (step === 3) {
-      if (
-        formData.costoMateriali === "" ||
-        Number(formData.costoMateriali) < 0
-      )
-        newErrors.costoMateriali = "Costo materiali non valido.";
+      const righe = Array.isArray(formData.materialiRighe)
+        ? formData.materialiRighe
+        : [];
+
+      const materialiRigheErrors: Array<any> = [];
+      let hasMaterialiError = false;
+
+      if (righe.length < 1) {
+        newErrors.materialiRighe = "Inserisci almeno una riga di materiale.";
+        hasMaterialiError = true;
+      } else {
+        righe.forEach((row: any, idx: number) => {
+          const descr = String(row?.descrizione ?? "").trim();
+          const prezzoStr = String(row?.prezzo ?? "").trim();
+          const prezzoNum = Number(prezzoStr.replace(",", "."));
+
+          const rowErrors: any = {};
+
+          if (!descr) {
+            rowErrors.descrizione = "Inserisci la descrizione del materiale.";
+          }
+          if (!prezzoStr || !Number.isFinite(prezzoNum) || prezzoNum < 0) {
+            rowErrors.prezzo = "Prezzo non valido.";
+          }
+
+          if (Object.keys(rowErrors).length > 0) {
+            materialiRigheErrors[idx] = rowErrors;
+            hasMaterialiError = true;
+          }
+        });
+
+        if (hasMaterialiError) {
+          newErrors.materialiRighe = materialiRigheErrors;
+        }
+      }
+
       if (
         formData.costoManodopera === "" ||
         Number(formData.costoManodopera) < 0
@@ -149,6 +184,9 @@ export default function WizardPage() {
 
       if (!formData.azienda)
         newErrors.azienda = "Inserisci il nome azienda.";
+      if (!formData.indirizzoAzienda)
+        newErrors.indirizzoAzienda =
+          "Inserisci l'indirizzo dell'azienda.";
       if (!formData.tecnico)
         newErrors.tecnico = "Inserisci il tecnico.";
       if (!/\S+@\S+\.\S+/.test(formData.email))
@@ -213,7 +251,7 @@ export default function WizardPage() {
             ...(formData.extraPersonalizzati || []),
           ], // ✅ MERGE STRUTTURATO
 
-          costoMateriali: formData.costoMateriali,
+          materialiRighe: formData.materialiRighe,
           costoManodopera: formData.costoManodopera,
           costoExtra: formData.costoExtra,
           sconti: formData.sconti,
@@ -226,6 +264,7 @@ export default function WizardPage() {
           tempiInstallazione: formData.tempiInstallazione,
 
           azienda: formData.azienda,
+          indirizzoAzienda: formData.indirizzoAzienda,
           tecnico: formData.tecnico,
           telefono: formData.telefono,
           email: formData.email,

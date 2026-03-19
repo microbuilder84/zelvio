@@ -15,7 +15,24 @@ export const WizardSchema = z.object({
 
     lavoriExtra: z.array(z.string()).optional(),
 
-    costoMateriali: z.coerce.number().nonnegative(),
+    materialiRighe: z
+        .array(
+            z.object({
+                descrizione: z.string().min(1, "Inserisci la descrizione del materiale."),
+                prezzo: z.preprocess(
+                    (val) => {
+                        if (typeof val === "string") {
+                            const t = val.trim().replace(",", ".");
+                            if (t.length === 0) return undefined;
+                            return Number(t);
+                        }
+                        return val;
+                    },
+                    z.number().finite().nonnegative("Il prezzo non può essere negativo.")
+                ),
+            })
+        )
+        .min(1, "Inserisci almeno una riga di materiale."),
     costoManodopera: z.coerce.number().nonnegative(),
     costoExtra: z.coerce.number().nonnegative(),
     sconti: z.coerce.number().nonnegative(),
@@ -32,5 +49,6 @@ export const WizardSchema = z.object({
     email: z.string().email(),
 
     azienda: z.string().min(1),
+    indirizzoAzienda: z.string().min(1, "Inserisci l'indirizzo dell'azienda."),
     piva: z.string().min(1),
 });

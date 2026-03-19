@@ -12,6 +12,20 @@ function toMoneyNumber(v: unknown) {
   return Number.isFinite(n) ? n : 0;
 }
 
+function formatTempiInstallazioneInput(value: unknown) {
+  const s = value == null ? "" : String(value).trim();
+  if (!s) return "";
+
+  // Se l'utente inserisce solo un numero (es. "2"), aggiungiamo l'unità.
+  const m = s.match(/^(\d+)$/);
+  if (m) {
+    const n = Number(m[1]);
+    return `${n} ${n === 1 ? "giornata lavorativa" : "giornate lavorative"}`;
+  }
+
+  return s;
+}
+
 /* ================= TEMPI DETERMINISTICI ================= */
 
 function generaTempiStimati(data: any) {
@@ -49,6 +63,28 @@ function normalizzaLavoriExtra(extra: unknown): string[] {
   }
 
   return Array.from(uniqueMap.values());
+}
+
+function calcolaMaterialiRighe(materialiRighe: unknown) {
+  if (!Array.isArray(materialiRighe)) {
+    return { totale: 0, righeStrings: [] as string[] };
+  }
+
+  const righeStrings = materialiRighe
+    .map((r: any) => {
+      const descrizione = String(r?.descrizione ?? "").trim();
+      const prezzo = toMoneyNumber(r?.prezzo);
+      if (!descrizione) return "";
+      return `${descrizione} — €${prezzo}`;
+    })
+    .filter((s: string) => s.length > 0);
+
+  const totale = materialiRighe.reduce(
+    (acc: number, r: any) => acc + toMoneyNumber(r?.prezzo),
+    0
+  );
+
+  return { totale, righeStrings };
 }
 
 export async function POST(req: NextRequest) {
@@ -94,16 +130,23 @@ export async function POST(req: NextRequest) {
 
     /* ================= TEMPI FINALI ================= */
 
+    const tempiInstallazioneDaUtente = formatTempiInstallazioneInput(
+      dataInput.tempiInstallazione
+    );
+
     const tempiInstallazioneFinali =
-      dataInput.tempiInstallazione &&
-        dataInput.tempiInstallazione.trim().length > 0
-        ? dataInput.tempiInstallazione.trim()
+      tempiInstallazioneDaUtente && tempiInstallazioneDaUtente.length > 0
+        ? tempiInstallazioneDaUtente
         : generaTempiStimati(dataInput);
+
+    /* ================= MATERIALI DETTAGLIATI ================= */
+    const { totale: totaleMateriali, righeStrings: materialiRigheStrings } =
+      calcolaMaterialiRighe(dataInput.materialiRighe);
 
     /* ================= CALCOLO TOTALE ================= */
 
     const totale =
-      toMoneyNumber(dataInput.costoMateriali) +
+      totaleMateriali +
       toMoneyNumber(dataInput.costoManodopera) +
       toMoneyNumber(dataInput.costoExtra) -
       toMoneyNumber(dataInput.sconti);
@@ -129,6 +172,7 @@ STRUTTURA OBBLIGATORIA:
 {
   "intestazione": {
     "azienda": string,
+    "indirizzoAzienda": string,
     "tecnico": string,
     "telefono": string,
     "email": string,
@@ -179,7 +223,7 @@ ${tempiInstallazioneFinali}
 
 COSTI:
 
-Materiali: ${toMoneyNumber(dataInput.costoMateriali)}
+Materiali: ${totaleMateriali}
 Manodopera: ${toMoneyNumber(dataInput.costoManodopera)}
 Extra: ${toMoneyNumber(dataInput.costoExtra)}
 Sconti: ${toMoneyNumber(dataInput.sconti)}
@@ -188,6 +232,7 @@ Totale: ${totale}
 INSTALLATORE:
 
 Azienda: ${dataInput.azienda}
+Indirizzo Azienda: ${dataInput.indirizzoAzienda}
 Tecnico: ${dataInput.tecnico}
 Telefono: ${dataInput.telefono}
 Email: ${dataInput.email}
@@ -262,6 +307,7 @@ Il totale deve essere ESATTAMENTE ${totale}.
 
     parsed.intestazione = parsed.intestazione || {};
     parsed.intestazione.azienda = dataInput.azienda;
+    parsed.intestazione.indirizzoAzienda = dataInput.indirizzoAzienda;
     parsed.intestazione.tecnico = dataInput.tecnico;
     parsed.intestazione.telefono = dataInput.telefono;
     parsed.intestazione.email = dataInput.email;
@@ -270,7 +316,7 @@ Il totale deve essere ESATTAMENTE ${totale}.
     parsed.intestazione.clienteIndirizzo = dataInput.clienteIndirizzo;
 
     parsed.costi = parsed.costi || {};
-    parsed.costi.materiali = toMoneyNumber(dataInput.costoMateriali);
+    parsed.costi.materiali = totaleMateriali;
     parsed.costi.manodopera = toMoneyNumber(dataInput.costoManodopera);
     parsed.costi.extra = toMoneyNumber(dataInput.costoExtra);
     parsed.costi.sconti = toMoneyNumber(dataInput.sconti);
@@ -285,7 +331,10 @@ Il totale deve essere ESATTAMENTE ${totale}.
       "La garanzia sui materiali è di 2 anni."
     ];
 
-    parsed.materiali = normalizzaLavoriExtra(parsed.materiali);
+    parsed.materiali =
+      materialiRigheStrings.length > 0
+        ? normalizzaLavoriExtra(materialiRigheStrings)
+        : normalizzaLavoriExtra(parsed.materiali);
 
     /* ================= VALIDAZIONE STRUTTURA ================= */
 

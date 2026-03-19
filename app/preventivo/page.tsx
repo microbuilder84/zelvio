@@ -142,6 +142,12 @@ export default function PreventivoPage() {
                             {intestazione?.telefono ?? aziendaData?.telefono ?? "—"}
                         </p>
                         <p>
+                            Indirizzo Azienda:{" "}
+                            {intestazione?.indirizzoAzienda ??
+                                aziendaData?.indirizzoAzienda ??
+                                "—"}
+                        </p>
+                        <p>
                             Email:{" "}
                             {intestazione?.email ?? aziendaData?.email ?? "—"}
                         </p>

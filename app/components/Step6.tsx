@@ -117,6 +117,32 @@ export default function Step6({ formData, updateField, errors, validateField }: 
                         <p className="text-red-600 text-sm">{errors.piva}</p>
                     )}
                 </div>
+
+                {/* INDIRIZZO AZIENDA */}
+                <div className="space-y-1">
+                    <label className="block text-sm font-medium text-gray-700">
+                        Indirizzo Azienda
+                    </label>
+                    <textarea
+                        value={formData.indirizzoAzienda}
+                        onChange={(e) =>
+                            updateField("indirizzoAzienda", e.target.value)
+                        }
+                        onBlur={(e) =>
+                            validateField?.("indirizzoAzienda", e.target.value)
+                        }
+                        className={`w-full p-3 rounded-lg border border-gray-300 shadow-sm h-28
+                       focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition ${
+                           errors.indirizzoAzienda ? "border-red-500" : ""
+                       }`}
+                        placeholder="Es. Via Roma 10, 35100 Padova"
+                    />
+                    {errors.indirizzoAzienda && (
+                        <p className="text-red-600 text-sm">
+                            {errors.indirizzoAzienda}
+                        </p>
+                    )}
+                </div>
             </div>
 
             {/* ⭐ GRUPPO TECNICO RESPONSABILE */}

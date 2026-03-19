@@ -24,6 +24,36 @@ export default function Step7({
 }: Step7Props) {
     const [localError, setLocalError] = useState<string | null>(null);
 
+    const materialiRighe = Array.isArray(formData.materialiRighe)
+        ? formData.materialiRighe
+        : [];
+
+    const toMoneyNumber = (v: unknown) => {
+        if (typeof v === "number") return Number.isFinite(v) ? v : 0;
+        const n = Number(String(v ?? "").replace(",", "."));
+        return Number.isFinite(n) ? n : 0;
+    };
+
+    const totaleMateriali = materialiRighe.reduce(
+        (acc: number, row: any) => acc + toMoneyNumber(row?.prezzo),
+        0
+    );
+
+    const normalizeTempiInstallazioneInput = (raw: string) => {
+        const s = String(raw ?? "").trim();
+        if (!s) return s;
+
+        const m = s.match(/^(\d+)$/);
+        if (m) {
+            const n = Number(m[1]);
+            return `${n} ${
+                n === 1 ? "giornata lavorativa" : "giornate lavorative"
+            }`;
+        }
+
+        return raw;
+    };
+
     useEffect(() => {
         if (error) setLocalError(null);
     }, [error]);
@@ -124,11 +154,17 @@ export default function Step7({
                                 ? formData.tempiInstallazione
                                 : stimaAutomatica;
 
+                        const inputValue = formData.tempiInstallazione
+                            ? normalizeTempiInstallazioneInput(
+                                  String(formData.tempiInstallazione)
+                              )
+                            : "";
+
                         return (
                             <>
                                 <input
                                     type="text"
-                                    value={formData.tempiInstallazione || ""}
+                                    value={inputValue}
                                     onChange={(e) =>
                                         updateField && updateField("tempiInstallazione", e.target.value)
                                     }
@@ -152,7 +188,7 @@ export default function Step7({
                 {/* COSTI */}
                 <div className="p-5 rounded-xl bg-gray-50 border border-gray-200 shadow-sm">
                     <h3 className="font-semibold text-lg mb-3">💶 Costi</h3>
-                    <p><strong>Materiali:</strong> € {formData.costoMateriali || "0"}</p>
+                    <p><strong>Materiali:</strong> € {totaleMateriali}</p>
                     <p><strong>Manodopera:</strong> € {formData.costoManodopera || "0"}</p>
                     <p><strong>Extra:</strong> € {formData.costoExtra || "0"}</p>
                     <p><strong>Sconti:</strong> € {formData.sconti || "0"}</p>
