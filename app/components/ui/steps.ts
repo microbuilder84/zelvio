@@ -1,9 +1,8 @@
 export const steps = [
-    "Dati iniziali",
-    "Tipologia",
-    "Dimensioni",
-    "Materiali",
-    "Opzioni",
+    "Dati intervento",
+    "Installazione e extra",
+    "Costi",
+    "Note tecniche",
+    "Dati azienda",
     "Riepilogo",
-    "Preventivo"
 ];

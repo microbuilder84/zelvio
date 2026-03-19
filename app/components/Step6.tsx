@@ -15,7 +15,7 @@ export default function Step6({ formData, updateField, errors, validateField }: 
         <div className="space-y-8">
 
             {/* ⭐ STEPPER */}
-            <Stepper steps={steps} currentStep={6} />
+            <Stepper steps={steps} currentStep={5} />
 
             {/* ⭐ SEZIONE PRINCIPALE */}
             <div>
@@ -25,6 +25,52 @@ export default function Step6({ formData, updateField, errors, validateField }: 
                 <p className="text-gray-500 text-sm mt-1">
                     Inserisci le informazioni dell’azienda e del tecnico responsabile.
                 </p>
+            </div>
+
+            {/* ⭐ GRUPPO DATI AZIENDA */}
+            {/* ⭐ GRUPPO DATI CLIENTE */}
+            <div className="space-y-6 bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                    👤 Dati cliente
+                </h3>
+
+                {/* NOME CLIENTE */}
+                <div className="space-y-1">
+                    <label className="block text-sm font-medium text-gray-700">
+                        Nome Cliente
+                    </label>
+                    <input
+                        type="text"
+                        value={formData.clienteNome}
+                        onChange={(e) => updateField("clienteNome", e.target.value)}
+                        onBlur={(e) => validateField?.("clienteNome", e.target.value)}
+                        className={`w-full p-3 rounded-lg border shadow-sm transition 
+              ${errors.clienteNome ? "border-red-500" : "border-gray-300"}
+              focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                        placeholder="Es. Mario Rossi"
+                    />
+                    {errors.clienteNome && (
+                        <p className="text-red-600 text-sm">{errors.clienteNome}</p>
+                    )}
+                </div>
+
+                {/* INDIRIZZO CLIENTE */}
+                <div className="space-y-1">
+                    <label className="block text-sm font-medium text-gray-700">
+                        Indirizzo Cliente
+                    </label>
+                    <textarea
+                        value={formData.clienteIndirizzo}
+                        onChange={(e) => updateField("clienteIndirizzo", e.target.value)}
+                        onBlur={(e) => validateField?.("clienteIndirizzo", e.target.value)}
+                        className="w-full p-3 rounded-lg border border-gray-300 shadow-sm h-28
+                       focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                        placeholder="Es. Via Roma 10, 35100 Padova"
+                    />
+                    {errors.clienteIndirizzo && (
+                        <p className="text-red-600 text-sm">{errors.clienteIndirizzo}</p>
+                    )}
+                </div>
             </div>
 
             {/* ⭐ GRUPPO DATI AZIENDA */}

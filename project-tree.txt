@@ -1,0 +1,89 @@
+﻿.
+|- app/
+  |- (landing)/
+    |- components/
+      |- ChiSiamo.tsx
+      |- ComeFunziona.tsx
+      |- Contatti.tsx
+      |- Footer.tsx
+      |- Hero.tsx
+      |- PercheZelvio.tsx
+    |- page.tsx
+  |- accedi/
+    |- page.tsx
+  |- api/
+    |- generate/
+      |- route.ts
+    |- preventivo/
+      |- route.ts
+  |- components/
+    |- ui/
+      |- AnimatedSection.tsx
+      |- Badge.tsx
+      |- Button.tsx
+      |- Card.tsx
+      |- Container.tsx
+      |- Grid.tsx
+      |- Input.tsx
+      |- Modal.tsx
+      |- Navbar.tsx
+      |- Section.tsx
+      |- Stepper.tsx
+      |- steps.ts
+    |- loader.css
+    |- Step1.tsx
+    |- Step2.tsx
+    |- Step3.tsx
+    |- Step4.tsx
+    |- Step5.tsx
+    |- Step6.tsx
+    |- Step7.tsx
+  |- cookie/
+    |- page.tsx
+  |- legal/
+    |- page.tsx
+  |- preventivo/
+    |- page.tsx
+  |- privacy/
+    |- page.tsx
+  |- registrati/
+    |- page.tsx
+  |- termini/
+    |- page.tsx
+  |- wizard/
+    |- page.tsx
+  |- fade.css
+  |- favicon.ico
+  |- globals.css
+  |- layout.tsx
+  |- robots.txt
+  |- sitemap.ts
+|- lib/
+  |- wizardSchema.ts
+|- public/
+  |- android-chrome-192x192.png
+  |- android-chrome-512x512.png
+  |- apple-touch-icon.png
+  |- favicon.ico
+  |- favicon-16x16.png
+  |- favicon-32x32.png
+  |- file.svg
+  |- globe.svg
+  |- logo-blu-senza-payoff.png
+  |- mockup.png
+  |- next.svg
+  |- og-image.png
+  |- preventivo-intervento-zelvio.png
+  |- site.webmanifest
+  |- vercel.svg
+  |- window.svg
+|- .env.local
+|- .gitignore
+|- eslint.config.mjs
+|- next.config.ts
+|- next-env.d.ts
+|- package.json
+|- package-lock.json
+|- postcss.config.mjs
+|- README.md
+|- tsconfig.json

@@ -22,7 +22,8 @@ export const WizardSchema = z.object({
 
     noteTecniche: z.string().optional(),
     richiesteCliente: z.string().optional(),
-    urgenza: z.string().optional(),
+    clienteNome: z.string().min(1),
+    clienteIndirizzo: z.string().min(1),
 
     tempiInstallazione: z.string().optional(), // ✅ AGGIUNTO
 

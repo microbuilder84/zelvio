@@ -132,7 +132,9 @@ STRUTTURA OBBLIGATORIA:
     "tecnico": string,
     "telefono": string,
     "email": string,
-    "piva": string
+    "piva": string,
+    "clienteNome": string,
+    "clienteIndirizzo": string
   },
   "titolo": string,
   "introduzione": string,
@@ -167,6 +169,10 @@ Lavori extra: ${lavoriExtraNormalizzati.length
         ? lavoriExtraNormalizzati.join(", ")
         : "nessuno"
       }
+
+DATI CLIENTE:
+Nome cliente: ${dataInput.clienteNome}
+Indirizzo cliente: ${dataInput.clienteIndirizzo}
 
 TEMPI DI INSTALLAZIONE (OBBLIGATORI):
 ${tempiInstallazioneFinali}
@@ -253,6 +259,15 @@ Il totale deve essere ESATTAMENTE ${totale}.
     }
 
     /* ================= HARD OVERRIDE CAMPI CRITICI ================= */
+
+    parsed.intestazione = parsed.intestazione || {};
+    parsed.intestazione.azienda = dataInput.azienda;
+    parsed.intestazione.tecnico = dataInput.tecnico;
+    parsed.intestazione.telefono = dataInput.telefono;
+    parsed.intestazione.email = dataInput.email;
+    parsed.intestazione.piva = dataInput.piva;
+    parsed.intestazione.clienteNome = dataInput.clienteNome;
+    parsed.intestazione.clienteIndirizzo = dataInput.clienteIndirizzo;
 
     parsed.costi = parsed.costi || {};
     parsed.costi.materiali = toMoneyNumber(dataInput.costoMateriali);

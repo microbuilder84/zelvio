@@ -13,7 +13,7 @@ export default function Step5({ formData, updateField }: Step5Props) {
         <div className="space-y-8">
 
             {/* ⭐ STEPPER */}
-            <Stepper steps={steps} currentStep={5} />
+            <Stepper steps={steps} currentStep={4} />
 
             {/* ⭐ SEZIONE PRINCIPALE */}
             <div>
@@ -64,32 +64,6 @@ export default function Step5({ formData, updateField }: Step5Props) {
                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                         placeholder="Es. Installazione entro 48 ore, preferenza per lato sinistro..."
                     />
-                </div>
-            </div>
-
-            {/* ⭐ GRUPPO URGENZA */}
-            <div className="space-y-6 bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                    ⏱️ Livello di urgenza
-                </h3>
-
-                {/* URGENZA */}
-                <div className="space-y-1">
-                    <label className="block text-sm font-medium text-gray-700">
-                        Livello di Urgenza
-                    </label>
-                    <select
-                        value={formData.urgenza}
-                        onChange={(e) => updateField("urgenza", e.target.value)}
-                        className="w-full p-3 rounded-lg border border-gray-300 shadow-sm
-                       focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                    >
-                        <option value="">Seleziona...</option>
-                        <option value="bassa">Bassa</option>
-                        <option value="media">Media</option>
-                        <option value="alta">Alta</option>
-                        <option value="immediata">Immediata</option>
-                    </select>
                 </div>
             </div>
 

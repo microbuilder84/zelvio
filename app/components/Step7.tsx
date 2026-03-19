@@ -44,7 +44,7 @@ export default function Step7({
 
     return (
         <div className="relative space-y-10">
-            <Stepper steps={steps} currentStep={7} />
+            <Stepper steps={steps} currentStep={6} />
 
             {isGenerating && (
                 <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">

@@ -103,6 +103,7 @@ export default function PreventivoPage() {
     }
 
     const {
+        intestazione,
         titolo,
         introduzione,
         descrizioneTecnica,
@@ -117,13 +118,37 @@ export default function PreventivoPage() {
         <div className="min-h-screen bg-gray-100 flex justify-center py-12 px-4">
             <div className="bg-white shadow-xl rounded-2xl p-10 w-full max-w-4xl border border-gray-200 print:shadow-none print:border-none">
 
-                {aziendaData && (
+                {(aziendaData || intestazione) && (
                     <div className="mb-10 pb-6 border-b border-gray-300 print:border-none">
-                        <h2 className="text-2xl font-bold">{aziendaData.azienda}</h2>
-                        <p>Tecnico: {aziendaData.tecnico}</p>
-                        <p>Tel: {aziendaData.telefono}</p>
-                        <p>Email: {aziendaData.email}</p>
-                        <p>P.IVA: {aziendaData.piva}</p>
+                        <h2 className="text-2xl font-bold">
+                            {aziendaData?.azienda ?? intestazione?.azienda ?? "—"}
+                        </h2>
+                        <p>
+                            Cliente:{" "}
+                            {intestazione?.clienteNome ?? aziendaData?.clienteNome ?? "—"}
+                        </p>
+                        <p>
+                            Indirizzo cliente:{" "}
+                            {intestazione?.clienteIndirizzo ??
+                                aziendaData?.clienteIndirizzo ??
+                                "—"}
+                        </p>
+                        <p>
+                            Tecnico:{" "}
+                            {intestazione?.tecnico ?? aziendaData?.tecnico ?? "—"}
+                        </p>
+                        <p>
+                            Tel:{" "}
+                            {intestazione?.telefono ?? aziendaData?.telefono ?? "—"}
+                        </p>
+                        <p>
+                            Email:{" "}
+                            {intestazione?.email ?? aziendaData?.email ?? "—"}
+                        </p>
+                        <p>
+                            P.IVA:{" "}
+                            {intestazione?.piva ?? aziendaData?.piva ?? "—"}
+                        </p>
                     </div>
                 )}
 

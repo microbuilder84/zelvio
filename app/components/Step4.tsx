@@ -15,7 +15,7 @@ export default function Step4({ formData, updateField, errors, validateField }: 
         <div className="space-y-8">
 
             {/* ⭐ STEPPER */}
-            <Stepper steps={steps} currentStep={4} />
+            <Stepper steps={steps} currentStep={3} />
 
             {/* ⭐ SEZIONE PRINCIPALE */}
             <div>

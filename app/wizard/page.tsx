@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Step1 from "../components/Step1";
 import Step2 from "../components/Step2";
-import Step3 from "../components/Step3";
 import Step4 from "../components/Step4";
 import Step5 from "../components/Step5";
 import Step6 from "../components/Step6";
@@ -12,7 +11,6 @@ import Step7 from "../components/Step7";
 import {
   WrenchIcon,
   HomeIcon,
-  AdjustmentsHorizontalIcon,
   CurrencyEuroIcon,
   DocumentTextIcon,
   BuildingOfficeIcon,
@@ -24,12 +22,11 @@ export default function WizardPage() {
 
   const steps = [
     { id: 1, label: "Dati intervento", icon: WrenchIcon },
-    { id: 2, label: "Ambiente e metratura", icon: HomeIcon },
-    { id: 3, label: "Percorso tubazioni", icon: AdjustmentsHorizontalIcon },
-    { id: 4, label: "Costi", icon: CurrencyEuroIcon },
-    { id: 5, label: "Note tecniche", icon: DocumentTextIcon },
-    { id: 6, label: "Dati azienda", icon: BuildingOfficeIcon },
-    { id: 7, label: "Riepilogo", icon: ClipboardDocumentCheckIcon },
+    { id: 2, label: "Installazione e extra", icon: HomeIcon },
+    { id: 3, label: "Costi", icon: CurrencyEuroIcon },
+    { id: 4, label: "Note tecniche", icon: DocumentTextIcon },
+    { id: 5, label: "Dati azienda", icon: BuildingOfficeIcon },
+    { id: 6, label: "Riepilogo", icon: ClipboardDocumentCheckIcon },
   ];
 
   const current = steps.find((s) => s.id === currentStep);
@@ -55,8 +52,10 @@ export default function WizardPage() {
 
     noteTecniche: "",
     richiesteCliente: "",
-    urgenza: "",
     tempiInstallazione: "",
+
+    clienteNome: "",
+    clienteIndirizzo: "",
 
     azienda: "",
     tecnico: "",
@@ -124,7 +123,7 @@ export default function WizardPage() {
         newErrors.tipoMuro = "Seleziona il tipo di muro.";
     }
 
-    if (step === 4) {
+    if (step === 3) {
       if (
         formData.costoMateriali === "" ||
         Number(formData.costoMateriali) < 0
@@ -142,7 +141,12 @@ export default function WizardPage() {
         newErrors.sconti = "Sconto non valido.";
     }
 
-    if (step === 6) {
+    if (step === 5) {
+      if (!formData.clienteNome)
+        newErrors.clienteNome = "Inserisci il nome cliente.";
+      if (!formData.clienteIndirizzo)
+        newErrors.clienteIndirizzo = "Inserisci l'indirizzo cliente.";
+
       if (!formData.azienda)
         newErrors.azienda = "Inserisci il nome azienda.";
       if (!formData.tecnico)
@@ -162,7 +166,7 @@ export default function WizardPage() {
   const nextStep = () => {
     if (isGenerating) return;
     if (!validateStep(currentStep)) return;
-    if (currentStep < 7) setCurrentStep(currentStep + 1);
+    if (currentStep < 6) setCurrentStep(currentStep + 1);
   };
 
   const prevStep = () => {
@@ -178,8 +182,8 @@ export default function WizardPage() {
     const ok =
       validateStep(1) &&
       validateStep(2) &&
-      validateStep(4) &&
-      validateStep(6);
+      validateStep(3) &&
+      validateStep(5);
 
     if (!ok) {
       setGenerateError("Correggi i campi prima di generare.");
@@ -216,7 +220,9 @@ export default function WizardPage() {
 
           noteTecniche: formData.noteTecniche,
           richiesteCliente: formData.richiesteCliente,
-          urgenza: formData.urgenza,
+
+          clienteNome: formData.clienteNome,
+          clienteIndirizzo: formData.clienteIndirizzo,
           tempiInstallazione: formData.tempiInstallazione,
 
           azienda: formData.azienda,
@@ -285,38 +291,32 @@ export default function WizardPage() {
             />
           )}
           {currentStep === 3 && (
-            <Step3
-              formData={formData}
-              updateField={updateField}
-            />
-          )}
-          {currentStep === 4 && (
             <Step4
               formData={formData}
               updateField={updateField}
               errors={errors}
             />
           )}
-          {currentStep === 5 && (
+          {currentStep === 4 && (
             <Step5
               formData={formData}
               updateField={updateField}
             />
           )}
-          {currentStep === 6 && (
+          {currentStep === 5 && (
             <Step6
               formData={formData}
               updateField={updateField}
               errors={errors}
             />
           )}
-          {currentStep === 7 && (
+          {currentStep === 6 && (
             <Step7
               formData={formData}
               onGenerate={handleGenerate}
               isGenerating={isGenerating}
               error={generateError}
-              onBack={() => setCurrentStep(6)}
+              onBack={() => setCurrentStep(5)}
               updateField={updateField}
             />
           )}
@@ -332,7 +332,7 @@ export default function WizardPage() {
             </button>
           )}
 
-          {currentStep < 7 && (
+          {currentStep < 6 && (
             <button
               onClick={nextStep}
               className="px-4 py-2 bg-blue-600 text-white rounded"
