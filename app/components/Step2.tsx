@@ -13,18 +13,30 @@ interface Step2Props {
 
 export default function Step2({ formData, updateField, errors, validateField }: Step2Props) {
     const [customInput, setCustomInput] = useState("");
+    const extraPrezzi = formData.extraPrezzi || {};
 
     const toggleExtra = (value: string) => {
         const current = formData.extra || [];
+        const prezziCorrenti = formData.extraPrezzi || {};
 
         if (current.includes(value)) {
             updateField(
                 "extra",
                 current.filter((item: string) => item !== value)
             );
+            const nextPrezzi = { ...prezziCorrenti };
+            delete nextPrezzi[value];
+            updateField("extraPrezzi", nextPrezzi);
         } else {
             updateField("extra", [...current, value]);
         }
+    };
+
+    const updateExtraPrice = (value: string, prezzo: string) => {
+        updateField("extraPrezzi", {
+            ...extraPrezzi,
+            [value]: prezzo,
+        });
     };
 
     const addCustomExtra = () => {
@@ -178,21 +190,43 @@ export default function Step2({ formData, updateField, errors, validateField }: 
                 <h3 className="text-lg font-semibold text-gray-800">➕ Componenti aggiuntivi</h3>
 
                 <div className="grid grid-cols-1 gap-3">
-                    {options.map((item) => (
-                        <label
-                            key={item}
-                            className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer 
-                         hover:bg-gray-100 transition shadow-sm bg-white"
-                        >
-                            <input
-                                type="checkbox"
-                                checked={formData.extra?.includes(item) || false}
-                                onChange={() => toggleExtra(item)}
-                                className="h-4 w-4 accent-blue-600"
-                            />
-                            <span className="text-gray-800">{item}</span>
-                        </label>
-                    ))}
+                    {options.map((item) => {
+                        const selected = formData.extra?.includes(item) || false;
+                        return (
+                            <div
+                                key={item}
+                                className="p-3 border rounded-lg hover:bg-gray-100 transition shadow-sm bg-white"
+                            >
+                                <label className="flex items-center gap-3 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={selected}
+                                        onChange={() => toggleExtra(item)}
+                                        className="h-4 w-4 accent-blue-600"
+                                    />
+                                    <span className="text-gray-800">{item}</span>
+                                </label>
+
+                                {selected && (
+                                    <div className="mt-3">
+                                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                                            Prezzo opzionale (€)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            step="0.01"
+                                            inputMode="decimal"
+                                            value={extraPrezzi[item] ?? ""}
+                                            onChange={(e) => updateExtraPrice(item, e.target.value)}
+                                            placeholder="€"
+                                            className="w-full md:w-56 p-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
 

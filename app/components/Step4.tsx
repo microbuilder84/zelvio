@@ -135,7 +135,7 @@ export default function Step4({ formData, updateField, errors, validateField }: 
                                     )}
                                 </div>
 
-                                <div className="md:col-span-1 pt-7">
+                                <div className="md:col-span-1 pt-7 flex">
                                     <button
                                         type="button"
                                         onClick={() => {
@@ -145,14 +145,16 @@ export default function Step4({ formData, updateField, errors, validateField }: 
                                             );
                                             setMaterialiRighe(next);
                                         }}
-                                        className={`w-full px-3 py-2 rounded-lg border shadow-sm transition ${
+                                        className={`w-full min-h-[46px] flex items-center justify-center px-3 py-2 rounded-lg border shadow-sm text-lg font-semibold leading-none transition ${
                                             materialiRighe.length <= 1
-                                                ? "opacity-40 cursor-not-allowed bg-gray-100"
-                                                : "hover:bg-red-50 border-red-200"
+                                                ? "opacity-40 cursor-not-allowed bg-gray-100 text-red-400"
+                                                : "hover:bg-red-50 border-red-200 text-red-600"
                                         }`}
                                         disabled={materialiRighe.length <= 1}
+                                        aria-label="Rimuovi riga materiale"
+                                        title="Rimuovi"
                                     >
-                                        Rimuovi
+                                        X
                                     </button>
                                 </div>
                             </div>

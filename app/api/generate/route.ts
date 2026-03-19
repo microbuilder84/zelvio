@@ -46,17 +46,43 @@ function generaTempiStimati(data: any) {
 
 /* ================= NORMALIZZAZIONE EXTRA ================= */
 
-function normalizzaLavoriExtra(extra: unknown): string[] {
+type LavoroExtraNormalizzato = {
+  descrizione: string;
+  prezzo?: number;
+};
+
+function normalizzaLavoriExtra(extra: unknown): LavoroExtraNormalizzato[] {
   if (!Array.isArray(extra)) return [];
 
   const clean = extra
-    .map((item) => String(item).trim())
-    .filter((item) => item.length > 0);
+    .map((item) => {
+      if (typeof item === "string") {
+        const descrizione = item.trim();
+        if (!descrizione) return null;
+        return { descrizione } as LavoroExtraNormalizzato;
+      }
 
-  const uniqueMap = new Map<string, string>();
+      if (item && typeof item === "object") {
+        const descrizione = String((item as any).descrizione ?? "").trim();
+        if (!descrizione) return null;
+        const prezzo = toMoneyNumber((item as any).prezzo);
+        return {
+          descrizione,
+          prezzo:
+            (item as any).prezzo === "" || (item as any).prezzo == null
+              ? undefined
+              : prezzo,
+        } as LavoroExtraNormalizzato;
+      }
+
+      return null;
+    })
+    .filter((item): item is LavoroExtraNormalizzato => Boolean(item));
+
+  const uniqueMap = new Map<string, LavoroExtraNormalizzato>();
 
   for (const item of clean) {
-    const key = item.toLowerCase();
+    const key = item.descrizione.toLowerCase();
     if (!uniqueMap.has(key)) {
       uniqueMap.set(key, item);
     }
@@ -124,8 +150,14 @@ export async function POST(req: NextRequest) {
 
     /* ================= EXTRA NORMALIZZATI ================= */
 
-    const lavoriExtraNormalizzati = normalizzaLavoriExtra(
+    const lavoriExtraNormalizzatiCompletati = normalizzaLavoriExtra(
       dataInput.lavoriExtra
+    );
+    const lavoriExtraNormalizzati = lavoriExtraNormalizzatiCompletati.map(
+      (item) =>
+        item.prezzo == null
+          ? item.descrizione
+          : `${item.descrizione} — €${item.prezzo}`
     );
 
     /* ================= TEMPI FINALI ================= */
@@ -140,8 +172,23 @@ export async function POST(req: NextRequest) {
         : generaTempiStimati(dataInput);
 
     /* ================= MATERIALI DETTAGLIATI ================= */
-    const { totale: totaleMateriali, righeStrings: materialiRigheStrings } =
+    const { totale: totaleMaterialiBase, righeStrings: materialiRigheStrings } =
       calcolaMaterialiRighe(dataInput.materialiRighe);
+
+    const extraConPrezzo = lavoriExtraNormalizzatiCompletati
+      .filter((item) => item.prezzo != null)
+      .map((item) => `${item.descrizione} — €${toMoneyNumber(item.prezzo)}`);
+
+    const totaleExtraConPrezzo = lavoriExtraNormalizzatiCompletati.reduce(
+      (acc, item) => acc + toMoneyNumber(item.prezzo),
+      0
+    );
+
+    const totaleMateriali = totaleMaterialiBase + totaleExtraConPrezzo;
+    const materialiRigheFinali = [
+      ...materialiRigheStrings,
+      ...extraConPrezzo,
+    ];
 
     /* ================= CALCOLO TOTALE ================= */
 
@@ -332,9 +379,13 @@ Il totale deve essere ESATTAMENTE ${totale}.
     ];
 
     parsed.materiali =
-      materialiRigheStrings.length > 0
-        ? normalizzaLavoriExtra(materialiRigheStrings)
-        : normalizzaLavoriExtra(parsed.materiali);
+      materialiRigheFinali.length > 0
+        ? materialiRigheFinali
+        : normalizzaLavoriExtra(parsed.materiali).map((item) =>
+            item.prezzo == null
+              ? item.descrizione
+              : `${item.descrizione} — €${item.prezzo}`
+          );
 
     /* ================= VALIDAZIONE STRUTTURA ================= */
 

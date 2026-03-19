@@ -43,6 +43,7 @@ export default function WizardPage() {
     tipoMuro: "",
 
     extra: [] as string[],
+    extraPrezzi: {} as Record<string, string>,
     extraPersonalizzati: [] as string[], // ✅ NUOVO
 
     materialiRighe: [{ descrizione: "", prezzo: "" }] as Array<{
@@ -247,9 +248,15 @@ export default function WizardPage() {
           tipoMuro: formData.tipoMuro,
 
           lavoriExtra: [
-            ...(formData.extra || []),
+            ...(formData.extra || []).map((descrizione: string) => ({
+              descrizione,
+              prezzo:
+                formData.extraPrezzi?.[descrizione] != null
+                  ? String(formData.extraPrezzi[descrizione]).trim()
+                  : "",
+            })),
             ...(formData.extraPersonalizzati || []),
-          ], // ✅ MERGE STRUTTURATO
+          ],
 
           materialiRighe: formData.materialiRighe,
           costoManodopera: formData.costoManodopera,

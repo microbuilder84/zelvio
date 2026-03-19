@@ -13,7 +13,28 @@ export const WizardSchema = z.object({
     posizioneEsterna: z.string().min(1),
     tipoMuro: z.string().min(1),
 
-    lavoriExtra: z.array(z.string()).optional(),
+    lavoriExtra: z
+        .array(
+            z.union([
+                z.string().min(1),
+                z.object({
+                    descrizione: z.string().min(1),
+                    prezzo: z.preprocess(
+                        (val) => {
+                            if (val === "" || val == null) return undefined;
+                            if (typeof val === "string") {
+                                const t = val.trim().replace(",", ".");
+                                if (t.length === 0) return undefined;
+                                return Number(t);
+                            }
+                            return val;
+                        },
+                        z.number().finite().nonnegative().optional()
+                    ),
+                }),
+            ])
+        )
+        .optional(),
 
     materialiRighe: z
         .array(
