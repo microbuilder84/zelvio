@@ -51,7 +51,6 @@ export default function WizardPage() {
       prezzo: string | number;
     }>,
     costoManodopera: "",
-    costoExtra: "",
     sconti: "",
 
     noteTecniche: "",
@@ -171,8 +170,6 @@ export default function WizardPage() {
       )
         newErrors.costoManodopera =
           "Costo manodopera non valido.";
-      if (Number(formData.costoExtra) < 0)
-        newErrors.costoExtra = "Costo extra non valido.";
       if (Number(formData.sconti) < 0)
         newErrors.sconti = "Sconto non valido.";
     }
@@ -260,7 +257,6 @@ export default function WizardPage() {
 
           materialiRighe: formData.materialiRighe,
           costoManodopera: formData.costoManodopera,
-          costoExtra: formData.costoExtra,
           sconti: formData.sconti,
 
           noteTecniche: formData.noteTecniche,

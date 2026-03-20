@@ -55,7 +55,6 @@ export const WizardSchema = z.object({
         )
         .min(1, "Inserisci almeno una riga di materiale."),
     costoManodopera: z.coerce.number().nonnegative(),
-    costoExtra: z.coerce.number().nonnegative(),
     sconti: z.coerce.number().nonnegative(),
 
     noteTecniche: z.string().optional(),

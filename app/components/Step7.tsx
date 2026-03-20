@@ -190,7 +190,6 @@ export default function Step7({
                     <h3 className="font-semibold text-lg mb-3">💶 Costi</h3>
                     <p><strong>Materiali:</strong> € {totaleMateriali}</p>
                     <p><strong>Manodopera:</strong> € {formData.costoManodopera || "0"}</p>
-                    <p><strong>Extra:</strong> € {formData.costoExtra || "0"}</p>
                     <p><strong>Sconti:</strong> € {formData.sconti || "0"}</p>
                 </div>
 

@@ -209,10 +209,6 @@ export default function PreventivoPage() {
                             <span>€ {costi.manodopera}</span>
                         </div>
                         <div className="flex justify-between">
-                            <span>Extra</span>
-                            <span>€ {costi.extra}</span>
-                        </div>
-                        <div className="flex justify-between">
                             <span>Sconti</span>
                             <span>€ {costi.sconti}</span>
                         </div>

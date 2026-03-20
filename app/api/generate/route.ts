@@ -194,8 +194,7 @@ export async function POST(req: NextRequest) {
 
     const totale =
       totaleMateriali +
-      toMoneyNumber(dataInput.costoManodopera) +
-      toMoneyNumber(dataInput.costoExtra) -
+      toMoneyNumber(dataInput.costoManodopera) -
       toMoneyNumber(dataInput.sconti);
 
     /* ================= PROMPT ================= */
@@ -272,7 +271,6 @@ COSTI:
 
 Materiali: ${totaleMateriali}
 Manodopera: ${toMoneyNumber(dataInput.costoManodopera)}
-Extra: ${toMoneyNumber(dataInput.costoExtra)}
 Sconti: ${toMoneyNumber(dataInput.sconti)}
 Totale: ${totale}
 
@@ -365,7 +363,7 @@ Il totale deve essere ESATTAMENTE ${totale}.
     parsed.costi = parsed.costi || {};
     parsed.costi.materiali = totaleMateriali;
     parsed.costi.manodopera = toMoneyNumber(dataInput.costoManodopera);
-    parsed.costi.extra = toMoneyNumber(dataInput.costoExtra);
+    parsed.costi.extra = 0;
     parsed.costi.sconti = toMoneyNumber(dataInput.sconti);
     parsed.costi.totale = totale;
 

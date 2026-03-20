@@ -198,31 +198,11 @@ export default function Step4({ formData, updateField, errors, validateField }: 
                 </div>
             </div>
 
-            {/* ⭐ GRUPPO COSTI EXTRA */}
+            {/* ⭐ GRUPPO SCONTI */}
             <div className="space-y-6 bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm">
                 <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                    ➕ Extra e Sconti
+                    💸 Sconti
                 </h3>
-
-                {/* COSTO EXTRA */}
-                <div className="space-y-1">
-                    <label className="block text-sm font-medium text-gray-700">
-                        Costo Extra (€)
-                    </label>
-                    <input
-                        type="text"
-                        value={formData.costoExtra}
-                        onChange={(e) => updateField("costoExtra", e.target.value)}
-                        onBlur={(e) => validateField?.("costoExtra", e.target.value)}
-                        className={`w-full p-3 rounded-lg border shadow-sm transition 
-              ${errors.costoExtra ? "border-red-500" : "border-gray-300"}
-              focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
-                        placeholder="Es. 50"
-                    />
-                    {errors.costoExtra && (
-                        <p className="text-red-600 text-sm">{errors.costoExtra}</p>
-                    )}
-                </div>
 
                 {/* SCONTI */}
                 <div className="space-y-1">
