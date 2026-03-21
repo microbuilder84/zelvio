@@ -235,7 +235,7 @@ export async function POST(req: NextRequest) {
       "| tipoIntervento:",
       dataInput.tipoIntervento,
       "| modello:",
-      (dataInput as any).modello
+      dataInput.marcaModello
     );
     const datiInterventoPerAI: {
       distanzaUnitaInterna?: number;

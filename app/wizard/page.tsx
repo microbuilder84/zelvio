@@ -231,6 +231,14 @@ export default function WizardPage() {
     setGenerateError(null);
 
     try {
+      console.log(
+        "PAYLOAD:",
+        JSON.stringify({
+          tipoIntervento: formData.intervento,
+          tipoApparecchio: formData.tipoApparecchio,
+          marcaModello: formData.modello,
+        })
+      );
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
