@@ -113,6 +113,26 @@ function calcolaMaterialiRighe(materialiRighe: unknown) {
   return { totale, righeStrings };
 }
 
+function determinaTipoApparecchio(
+  tipoIntervento: unknown,
+  marcaModello: unknown
+) {
+  const testo = `${String(tipoIntervento ?? "")} ${String(marcaModello ?? "")}`
+    .toLowerCase()
+    .trim();
+
+  if (!testo) return "apparecchio";
+  if (/(pompa\s*di\s*calore|pdc)/i.test(testo)) return "pompa di calore";
+  if (/(caldaia|condensazione|ibrida)/i.test(testo)) return "caldaia";
+  if (
+    /(climatizzatore|condizionatore|split|multi\s*split|inverter)/i.test(testo)
+  ) {
+    return "climatizzatore";
+  }
+
+  return "apparecchio";
+}
+
 export async function POST(req: NextRequest) {
   try {
     /* ================= ENV CHECK ================= */
@@ -198,9 +218,13 @@ export async function POST(req: NextRequest) {
       toMoneyNumber(dataInput.sconti);
 
     /* ================= PROMPT ================= */
+    const tipoApparecchio = determinaTipoApparecchio(
+      dataInput.tipoIntervento,
+      dataInput.marcaModello
+    );
 
     const prompt = `
-Sei un tecnico certificato specializzato in installazione di climatizzatori, pompe di calore e impianti termici.
+Sei un tecnico certificato specializzato in installazione e manutenzione di impianti termici e HVAC.
 
 Redigi un preventivo tecnico altamente professionale, strutturato come farebbe un'impresa certificata con esperienza sul campo.
 
@@ -212,6 +236,9 @@ Regole rigide:
 - Restituisci SOLO JSON valido.
 - Nessun markdown.
 - Nessun testo fuori dal JSON.
+- In "descrizioneTecnica" descrivi sempre l'apparecchio in modo coerente con i dati dell'intervento:
+  tipo intervento="${dataInput.tipoIntervento}", marca e modello="${dataInput.marcaModello}".
+- Usa come riferimento principale il tipo: "${tipoApparecchio}".
 
 STRUTTURA OBBLIGATORIA:
 
