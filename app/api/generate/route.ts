@@ -157,13 +157,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      return NextResponse.json(
-        { error: "Configurazione Supabase mancante" },
-        { status: 500 }
-      );
-    }
-
     /* ================= VALIDAZIONE INPUT ================= */
 
     const body = await req.json();
@@ -236,6 +229,14 @@ export async function POST(req: NextRequest) {
       dataInput.tipoIntervento,
       dataInput.marcaModello
     );
+    console.log(
+      "tipoApparecchio:",
+      tipoApparecchio,
+      "| tipoIntervento:",
+      dataInput.tipoIntervento,
+      "| modello:",
+      (dataInput as any).modello
+    );
     const datiInterventoPerAI: {
       distanzaUnitaInterna?: number;
       altezzaInstallazione?: number;
@@ -250,6 +251,13 @@ export async function POST(req: NextRequest) {
       delete datiInterventoPerAI.distanzaUnitaInterna;
       delete datiInterventoPerAI.altezzaInstallazione;
       delete datiInterventoPerAI.posizioneEsterna;
+    }
+
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return NextResponse.json(
+        { error: "Configurazione Supabase mancante" },
+        { status: 500 }
+      );
     }
 
     const prompt = `
