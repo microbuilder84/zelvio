@@ -222,10 +222,21 @@ export async function POST(req: NextRequest) {
       dataInput.tipoIntervento,
       dataInput.marcaModello
     );
-    const includiDistanzaUnita = tipoApparecchio !== "caldaia";
-    const distanzaUnitaPrompt = includiDistanzaUnita
-      ? `Distanza unità interna-esterna: ${dataInput.distanza} m`
-      : "";
+    const datiInterventoPerAI: {
+      distanzaUnitaInterna?: number;
+      altezzaInstallazione?: number;
+      posizioneEsterna?: string;
+    } = {
+      distanzaUnitaInterna: dataInput.distanza,
+      altezzaInstallazione: dataInput.altezza,
+      posizioneEsterna: dataInput.posizioneEsterna,
+    };
+
+    if (tipoApparecchio === "caldaia") {
+      delete datiInterventoPerAI.distanzaUnitaInterna;
+      delete datiInterventoPerAI.altezzaInstallazione;
+      delete datiInterventoPerAI.posizioneEsterna;
+    }
 
     const prompt = `
 Sei un tecnico certificato specializzato in installazione e manutenzione di impianti termici e HVAC.
@@ -280,10 +291,15 @@ Marca e modello: ${dataInput.marcaModello}
 Potenza: ${dataInput.potenza} BTU
 Ambiente: ${dataInput.tipologiaAmbiente}
 Metratura: ${dataInput.metratura} m²
-
-${distanzaUnitaPrompt}
-Altezza installazione: ${dataInput.altezza} m
-Posizione unità esterna: ${dataInput.posizioneEsterna}
+${datiInterventoPerAI.distanzaUnitaInterna != null
+        ? `Distanza unità interna-esterna: ${datiInterventoPerAI.distanzaUnitaInterna} m`
+        : ""}
+${datiInterventoPerAI.altezzaInstallazione != null
+        ? `Altezza installazione: ${datiInterventoPerAI.altezzaInstallazione} m`
+        : ""}
+${datiInterventoPerAI.posizioneEsterna
+        ? `Posizione unità esterna: ${datiInterventoPerAI.posizioneEsterna}`
+        : ""}
 Tipo muro: ${dataInput.tipoMuro}
 
 Lavori extra: ${lavoriExtraNormalizzati.length
