@@ -16,8 +16,8 @@ function formatTempiInstallazioneInput(value: unknown) {
   const s = value == null ? "" : String(value).trim();
   if (!s) return "";
 
-  // Se l'utente inserisce solo un numero (es. "2"), aggiungiamo l'unità.
-  const m = s.match(/^(\d+)$/);
+  // Se l'utente inserisce un numero (es. "2" o "2 giornate"), uniformiamo la grammatica.
+  const m = s.match(/^(\d+)(?:\D.*)?$/);
   if (m) {
     const n = Number(m[1]);
     return `${n} ${n === 1 ? "giornata lavorativa" : "giornate lavorative"}`;
@@ -123,7 +123,7 @@ function determinaTipoApparecchio(
 
   if (!testo) return "apparecchio";
   if (/(pompa\s*di\s*calore|pdc)/i.test(testo)) return "pompa di calore";
-  if (/(caldaia|condensazione|ibrida)/i.test(testo)) return "caldaia";
+  if (/(caldaia|condensazione|ibrida|boiler|termic)/i.test(testo)) return "caldaia";
   if (
     /(climatizzatore|condizionatore|split|multi\s*split|inverter)/i.test(testo)
   ) {
@@ -222,6 +222,10 @@ export async function POST(req: NextRequest) {
       dataInput.tipoIntervento,
       dataInput.marcaModello
     );
+    const includiDistanzaUnita = tipoApparecchio !== "caldaia";
+    const distanzaUnitaPrompt = includiDistanzaUnita
+      ? `Distanza unità interna-esterna: ${dataInput.distanza} m`
+      : "";
 
     const prompt = `
 Sei un tecnico certificato specializzato in installazione e manutenzione di impianti termici e HVAC.
@@ -277,7 +281,7 @@ Potenza: ${dataInput.potenza} BTU
 Ambiente: ${dataInput.tipologiaAmbiente}
 Metratura: ${dataInput.metratura} m²
 
-Distanza unità interna-esterna: ${dataInput.distanza} m
+${distanzaUnitaPrompt}
 Altezza installazione: ${dataInput.altezza} m
 Posizione unità esterna: ${dataInput.posizioneEsterna}
 Tipo muro: ${dataInput.tipoMuro}
