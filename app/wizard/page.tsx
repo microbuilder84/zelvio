@@ -33,6 +33,7 @@ export default function WizardPage() {
 
   const [formData, setFormData] = useState({
     intervento: "",
+    tipoApparecchio: "",
     modello: "",
     potenza: "",
     ambiente: "",
@@ -235,6 +236,7 @@ export default function WizardPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           tipoIntervento: formData.intervento,
+          tipoApparecchio: formData.tipoApparecchio,
           marcaModello: formData.modello,
           potenza: formData.potenza,
           tipologiaAmbiente: formData.ambiente,

@@ -52,6 +52,24 @@ export default function Step1({ formData, updateField, errors, validateField }: 
                     )}
                 </div>
 
+                {/* CAMPO: TIPO APPARECCHIO (OPZIONALE) */}
+                <div className="space-y-1">
+                    <label className="block text-sm font-medium text-gray-700">
+                        Tipo apparecchio (opzionale)
+                    </label>
+                    <select
+                        value={formData.tipoApparecchio || ""}
+                        onChange={(e) => updateField("tipoApparecchio", e.target.value)}
+                        className="w-full p-3 rounded-lg border shadow-sm transition border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="">Seleziona tipo apparecchio</option>
+                        <option value="climatizzatore">Climatizzatore</option>
+                        <option value="caldaia">Caldaia</option>
+                        <option value="pompa di calore">Pompa di calore</option>
+                        <option value="altro">Altro</option>
+                    </select>
+                </div>
+
                 {/* CAMPO: MODELLO */}
                 <div className="space-y-1">
                     <label className="block text-sm font-medium text-gray-700">

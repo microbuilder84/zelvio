@@ -111,6 +111,7 @@ export default function Step7({
                 <div className="p-5 rounded-xl bg-gray-50 border border-gray-200 shadow-sm">
                     <h3 className="font-semibold text-lg mb-3">🔧 Dati intervento</h3>
                     <p><strong>Tipo:</strong> {formData.intervento || "—"}</p>
+                    <p><strong>Tipo apparecchio:</strong> {formData.tipoApparecchio || "—"}</p>
                     <p><strong>Modello:</strong> {formData.modello || "—"}</p>
                     <p><strong>Potenza:</strong> {formData.potenza || "—"}</p>
                     <p><strong>Ambiente:</strong> {formData.ambiente || "—"}</p>

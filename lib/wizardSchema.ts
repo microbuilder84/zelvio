@@ -2,6 +2,9 @@ import { z } from "zod";
 
 export const WizardSchema = z.object({
     tipoIntervento: z.string().min(1),
+    tipoApparecchio: z
+        .enum(["climatizzatore", "caldaia", "pompa di calore", "altro"])
+        .optional(),
     marcaModello: z.string().min(1),
     potenza: z.coerce.number().positive(),
     tipologiaAmbiente: z.string().min(1),

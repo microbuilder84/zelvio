@@ -114,9 +114,22 @@ function calcolaMaterialiRighe(materialiRighe: unknown) {
 }
 
 function determinaTipoApparecchio(
+  tipoApparecchioSelezionato: unknown,
   tipoIntervento: unknown,
   marcaModello: unknown
 ) {
+  const tipoSelezionatoNorm = String(tipoApparecchioSelezionato ?? "")
+    .toLowerCase()
+    .trim();
+
+  if (
+    tipoSelezionatoNorm === "climatizzatore" ||
+    tipoSelezionatoNorm === "caldaia" ||
+    tipoSelezionatoNorm === "pompa di calore"
+  ) {
+    return tipoSelezionatoNorm;
+  }
+
   const testo = `${String(tipoIntervento ?? "")} ${String(marcaModello ?? "")}`
     .toLowerCase()
     .trim();
@@ -219,6 +232,7 @@ export async function POST(req: NextRequest) {
 
     /* ================= PROMPT ================= */
     const tipoApparecchio = determinaTipoApparecchio(
+      dataInput.tipoApparecchio,
       dataInput.tipoIntervento,
       dataInput.marcaModello
     );
